@@ -24,7 +24,12 @@ object Plum : KotlinPlugin(
         logger.debug("PlumReloaded >> Enabling.")
         logger.debug("Start init...")
 
+        // Init CommandSystem.
+        logger.debug("CommandSystem >> Init CommandSystem.")
+        RobotCommandManager
+
         // Init FileSystem.
+        logger.debug("FileSystem >> Init FileSystem.");
         PlumConfig.reload()
 
         logger.debug("Start to subscribe events")
@@ -53,7 +58,8 @@ object Plum : KotlinPlugin(
 
         }
 
-        logger.debug("Start TimerSystem.")
+        logger.debug("TimerSystem >> Start TimerSystem.")
+        RobotCommandManager
 
         logger.debug("End Init...")
     }
