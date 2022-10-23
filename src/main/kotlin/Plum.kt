@@ -24,6 +24,8 @@ object Plum : KotlinPlugin(
         logger.debug("PlumReloaded >> Enabling.")
         logger.debug("Start init...")
 
+        // Init FileSystem.
+        PlumConfig.reload()
 
         logger.debug("Start to subscribe events")
         val channel = globalEventChannel().exceptionHandler { logger.error(it) }
