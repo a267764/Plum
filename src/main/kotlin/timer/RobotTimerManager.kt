@@ -5,11 +5,12 @@ import com.sakurawald.plum.reloaded.timer.timers.DailyPoetry_Timer
 import com.sakurawald.plum.reloaded.timer.timers.DailySentenceTimer
 import java.util.*
 
-object RobotTimerManager : Timer(){
+object RobotTimerManager : Timer() {
     val tasks = mutableListOf(
         DailySentenceTimer,
         DailyPoetry_Timer
     )
+
     init {
         Plum.logger.debug("TimerSystem >> Start Timers.")
         registerAll()

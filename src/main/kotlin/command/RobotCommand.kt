@@ -11,19 +11,18 @@ abstract class RobotCommand(
     val rule: String,
     // 表示该指令的使用范围，允许什么类型的聊天使用
     val ranges: MutableList<RobotCommandChatType> = mutableListOf(),
-    val users :MutableList<RobotCommandUser> = mutableListOf()
+    val users: MutableList<RobotCommandUser> = mutableListOf()
 ) {
     val pattern = Pattern.compile(rule)
     fun isThisCommand(msg: String): Boolean = pattern.matcher(msg).matches()
-    fun runCheckUp(msgType: Int,time: Int,fromGroup: Long,fromQQ: Long, messageChain:MessageChain): Boolean
-    {
+    fun runCheckUp(msgType: Int, time: Int, fromGroup: Long, fromQQ: Long, messageChain: MessageChain): Boolean {
         if (!ranges.any { it.type == msgType }) {
             MessageManager.sendMessageBySituation(fromGroup, fromQQ, "很抱歉，该指令不能在当前聊天类型中使用。");
             return false
         }
         val authority = RobotCommandUser.getAuthority(fromGroup, fromQQ)
-        if (!users.any{it.userPermission == authority}) {
-            MessageManager.sendMessageBySituation(fromGroup, fromQQ,"很抱歉，您没有权限使用该指令~")
+        if (!users.any { it.userPermission == authority }) {
+            MessageManager.sendMessageBySituation(fromGroup, fromQQ, "很抱歉，您没有权限使用该指令~")
             return false
         }
         return true
@@ -75,7 +74,7 @@ enum class RobotCommandUser(var userPermission: Int) {
             if (getAuthorityByQQ(fromQQ) == BOT_ADMINISTRATOR.userPermission) {
                 return BOT_ADMINISTRATOR.userPermission
             }
-            return when(m.permission) {
+            return when (m.permission) {
                 MEMBER -> NORMAL_USER.userPermission
                 OWNER -> GROUP_OWNER.userPermission
                 ADMINISTRATOR -> GROUP_ADMINISTRATOR.userPermission

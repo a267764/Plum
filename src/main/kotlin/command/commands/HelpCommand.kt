@@ -27,6 +27,7 @@ object HelpCommand : RobotCommand(
              #重载配置      重新加载配置文件
              """.trimIndent()
     }
+
     override fun runCommand(msgType: Int, time: Int, fromGroup: Long, fromQQ: Long, messageChain: MessageChain) {
         var result = """
             --> Help
@@ -35,7 +36,7 @@ object HelpCommand : RobotCommand(
         val authority = RobotCommandUser.getAuthority(fromGroup, fromQQ)
 
         if (authority == RobotCommandUser.BOT_ADMINISTRATOR.userPermission) {
-             result = addSuperAdministratorHelp(result)
+            result = addSuperAdministratorHelp(result)
         }
 
         // 处理完文本后，最后发送文本

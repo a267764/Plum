@@ -16,8 +16,8 @@ object RobotCommandManager {
     fun isCommand(msg: String): Boolean {
         return true
     }
-    fun receiveMessage(msgType: Int, time: Int, fromGroup: Long, fromQQ: Long, messageChain: MessageChain)
-    {
+
+    fun receiveMessage(msgType: Int, time: Int, fromGroup: Long, fromQQ: Long, messageChain: MessageChain) {
         val content = messageChain.contentToString()
 
         if (content.length == 0) return
