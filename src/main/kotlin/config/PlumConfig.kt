@@ -133,4 +133,6 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
 
     val debug by value(PlumConfigDebug())
     val admin by value(PlumConfigAdmin())
+    val functions by value(PlumConfigFunctions())
+    val system by value(PlumConfigSystem())
 }
