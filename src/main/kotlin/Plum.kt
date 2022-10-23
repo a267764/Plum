@@ -1,7 +1,8 @@
 package com.sakurawald.plum.reloaded
 
-import com.sakurawald.function.NudgeFunction
+import com.sakurawald.plum.reloaded.command.RobotCommandManager
 import com.sakurawald.plum.reloaded.config.PlumConfig
+import com.sakurawald.plum.reloaded.function.NudgeFunction
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
@@ -50,7 +51,7 @@ object Plum : KotlinPlugin(
         channel.subscribeAlways<BotOnlineEvent> {
             if (bot_ == null) bot_ = it.bot
         }
-        channel.subscribeAlways<NudgeEvent>{NudgeFunction.handleEvent(it) }
+        channel.subscribeAlways<NudgeEvent> { NudgeFunction.handleEvent(it) }
         channel.subscribeAlways<NewFriendRequestEvent> {
 
         }
