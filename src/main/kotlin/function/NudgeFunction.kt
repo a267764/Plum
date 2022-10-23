@@ -1,6 +1,5 @@
 package com.sakurawald.plum.reloaded.function
 
-import com.sakurawald.PluginMain
 import com.sakurawald.api.HitoKoto_API
 import com.sakurawald.api.ThirdPartyRandomImage_API
 import com.sakurawald.debug.LoggerManager

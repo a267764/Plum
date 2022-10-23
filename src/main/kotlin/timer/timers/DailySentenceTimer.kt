@@ -1,11 +1,9 @@
 package com.sakurawald.plum.reloaded.timer.timers
 
-import com.sakurawald.PluginMain
 import com.sakurawald.api.PowerWord_API
 import com.sakurawald.api.PowerWord_API.Motto
 import com.sakurawald.bean.Countdown
 import com.sakurawald.debug.LoggerManager
-import com.sakurawald.files.FileManager
 import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.timer.DefaultPlan
@@ -13,7 +11,6 @@ import com.sakurawald.utils.DateUtil
 import com.sakurawald.utils.NetworkUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 
 object DailySentenceTimer : DailyTimer(

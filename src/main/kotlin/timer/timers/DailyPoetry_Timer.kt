@@ -9,6 +9,7 @@ import com.sakurawald.utils.DateUtil
 object DailyPoetry_Timer : DailyTimer(
     "DailyPoetry", 1000 * 5, 1000 * 60
 ) {
+    var todayPoetry: Poetry? = null
     override fun isPrepareStage(): Boolean {
         val nowDay = DateUtil.getNowDay()
         if (nowDay != lastPrepareDay) {
@@ -44,6 +45,7 @@ object DailyPoetry_Timer : DailyTimer(
 
         /** 准备sendMsg  */
         BaiDuHanYu_API.getRandomPoetry()?.also {
+            todayPoetry = it
             sendMsg = """
                 晚安，${DateUtil.getNowYear()}年${DateUtil.getNowMonth()}月${DateUtil.getNowDay()}日~
                 
