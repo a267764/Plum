@@ -1,12 +1,14 @@
 package com.sakurawald.plum.reloaded.command
 
 import com.sakurawald.plum.reloaded.Plum
+import com.sakurawald.plum.reloaded.command.commands.HelpCommand
 import com.sakurawald.plum.reloaded.command.commands.ReloadCommand
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import net.mamoe.mirai.message.data.MessageChain
 
 object RobotCommandManager {
     val commands = mutableListOf(
+        HelpCommand,
         ReloadCommand
     )
 
