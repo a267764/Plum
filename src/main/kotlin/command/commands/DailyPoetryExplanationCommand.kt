@@ -56,7 +56,7 @@ object DailyPoetryExplanationCommand : RobotCommand(
             〖注释〗
             ${targetPoetry.note}
             
-            """.trimIndent().trim(' ')
+            """.trimIndent().trim { it <= ' ' }
 
         /** 字数检测 **/
         val defaultMsg = """

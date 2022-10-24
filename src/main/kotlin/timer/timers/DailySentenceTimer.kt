@@ -2,8 +2,8 @@ package com.sakurawald.plum.reloaded.timer.timers
 
 import com.sakurawald.api.PowerWord_API
 import com.sakurawald.api.PowerWord_API.Motto
-import com.sakurawald.bean.Countdown
-import com.sakurawald.debug.LoggerManager
+import Countdown
+import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.timer.DefaultPlan
@@ -71,12 +71,12 @@ object DailySentenceTimer : DailyTimer(
         /** Function: DailySentence.  */
         defaultPlan()
         try {
-            todayMotto = PowerWord_API.getTodayMotto()
+            todayMotto = PowerWord_API.todayMotto
         } catch (e: Exception) {
             // Do nothing.
         }
 
-        sendMsg = """${sendMsg?.trim(' ')}
+        sendMsg = """${sendMsg?.trim { it <= ' ' }}
             
             ●今日格言：
             ${todayMotto?.content_cn}( ${todayMotto?.content_en} )"""
@@ -100,7 +100,7 @@ object DailySentenceTimer : DailyTimer(
                 // Do nothing.
             }
 
-            LoggerManager.logDebug("TimerSystem", "Daily Sentence: \n$sendMsg")
+            Plum.logger.debug("TimerSystem >> Daily Sentence: \n$sendMsg")
         }
     }
 
@@ -111,7 +111,7 @@ object DailySentenceTimer : DailyTimer(
     }
 
     override fun defaultPlan() {
-        todayMotto = PowerWord_API.Motto.getDefaultMotto()
+        todayMotto = PowerWord_API.Motto.defaultMotto
 
     }
 

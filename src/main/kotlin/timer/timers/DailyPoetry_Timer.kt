@@ -44,7 +44,7 @@ object DailyPoetry_Timer : DailyTimer(
     override fun prepareStage() {
 
         /** 准备sendMsg  */
-        BaiDuHanYu_API.getRandomPoetry()?.also {
+        BaiDuHanYu_API.randomPoetry?.also {
             todayPoetry = it
             sendMsg = """
                 晚安，${DateUtil.getNowYear()}年${DateUtil.getNowMonth()}月${DateUtil.getNowDay()}日~

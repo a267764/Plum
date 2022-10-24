@@ -4,7 +4,7 @@ import com.sakurawald.api.KugouMusicAPI
 import com.sakurawald.api.MusicPlatAPI
 import com.sakurawald.api.NeteaseCloudMusicAPI
 import com.sakurawald.api.TencentMusicAPI
-import com.sakurawald.bean.SongInformation
+import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.exception.CanNotDownloadFileException
 import com.sakurawald.exception.FileTooBigException
 import com.sakurawald.framework.BotManager
@@ -86,9 +86,9 @@ object SingSongCommand : RobotCommand(
                 input_music_name = SingManager.deleteParams(input_music_name)
                 /** Construct MusicPlats.  */
                 val musicPlatAPIS = listOf(
-                    NeteaseCloudMusicAPI.getInstance(),
-                    KugouMusicAPI.getInstance(),
-                    TencentMusicAPI.getInstance()
+                    NeteaseCloudMusicAPI.instance,
+                    KugouMusicAPI.instance,
+                    TencentMusicAPI.instance
                 )
                 // Select MusicPlat.
                 for (i in musicPlatAPIS.indices) {
