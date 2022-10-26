@@ -21,18 +21,18 @@ class SongInformation(
     var summary = ""
 
     override fun toString(): String = "SongInformation{" +
-                "music_Name='$music_Name'" +
-                ", music_ID=$music_ID" +
-                ", music_Length=$music_Length" +
-                ", music_introduction='$music_introduction'" +
-                ", music_Page_URL='$music_Page_URL'" +
-                ", author='$author'" +
-                ", music_File_URL='$music_File_URL'" +
-                ", music_MID='$music_MID'" +
-                ", img_URL='$img_URL'" +
-                ", hash='$hash'" +
-                ", sourceType='$sourceType'" +
-                ", summary='$summary'}"
+            "music_Name='$music_Name'" +
+            ", music_ID=$music_ID" +
+            ", music_Length=$music_Length" +
+            ", music_introduction='$music_introduction'" +
+            ", music_Page_URL='$music_Page_URL'" +
+            ", author='$author'" +
+            ", music_File_URL='$music_File_URL'" +
+            ", music_MID='$music_MID'" +
+            ", img_URL='$img_URL'" +
+            ", hash='$hash'" +
+            ", sourceType='$sourceType'" +
+            ", summary='$summary'}"
 
 
     companion object {

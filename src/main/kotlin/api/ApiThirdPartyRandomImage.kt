@@ -2,7 +2,9 @@ package com.sakurawald.plum.reloaded.api
 
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.config.PlumConfig
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 import java.util.*
 

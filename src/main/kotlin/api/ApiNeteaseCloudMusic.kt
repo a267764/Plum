@@ -2,16 +2,18 @@ package com.sakurawald.plum.reloaded.api
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.plum.reloaded.Plum
+import com.sakurawald.plum.reloaded.SongInformation
 import net.mamoe.mirai.message.data.MusicKind
 import net.mamoe.mirai.message.data.MusicShare
 import net.mamoe.mirai.message.data.toMessageChain
-import okhttp3.*
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.*
 
 object ApiNeteaseCloudMusic : AbstractApiMusicPlat(
     "NeteaseMusic - API",
@@ -28,7 +30,8 @@ object ApiNeteaseCloudMusic : AbstractApiMusicPlat(
             httpURLConnection.setRequestProperty("Charset", "UTF-8")
             httpURLConnection.connect()
             val fileLength = httpURLConnection.contentLength
-            Plum.logger.debug("Download >> 所要下载的文件: URL_path = $keyContent, fileLength = $fileLength"
+            Plum.logger.debug(
+                "Download >> 所要下载的文件: URL_path = $keyContent, fileLength = $fileLength"
             )
             /**
              * [!] 判断是否为付费歌曲。 若一首歌曲是付费歌曲，则网易云的音乐下载链接会404
@@ -71,7 +74,8 @@ object ApiNeteaseCloudMusic : AbstractApiMusicPlat(
         } catch (e: IOException) {
             Plum.logger.error(e)
         } finally {
-            Plum.logger.debug("$logTypeName >> 搜索音乐列表 - 结果: Code = "
+            Plum.logger.debug(
+                "$logTypeName >> 搜索音乐列表 - 结果: Code = "
                         + response!!.message + ", Response = " + json
             )
         }
@@ -92,6 +96,7 @@ object ApiNeteaseCloudMusic : AbstractApiMusicPlat(
         val jo_1 = jo.getAsJsonObject("result")
         if (!validSongList(jo)) return null
         val it = jo_1.getAsJsonArray("songs").iterator()
+
         /** 注意：网易api的songCount参数似乎有问题，有时候有歌曲，也返回0  */
         var result: SongInformation? = null
         var i = 1
@@ -109,12 +114,14 @@ object ApiNeteaseCloudMusic : AbstractApiMusicPlat(
                 it.music_Page_URL = "http://music.163.com/song/$id"
             }
             if (i >= index_) {
-                Plum.logger.debug("$logTypeName >> 获取的音乐信息(指定首) - 成功获取到指定首(第${index_}首)的音乐的信息: $result"
+                Plum.logger.debug(
+                    "$logTypeName >> 获取的音乐信息(指定首) - 成功获取到指定首(第${index_}首)的音乐的信息: $result"
                 )
 
                 // [!] 判断获取到的歌曲能不能下载, 若该首音乐不能下载, 则向下选择下一首
                 if (!canAccess(getDownloadMusicURL(id))) {
-                    Plum.logger.debug("$logTypeName >> 获取的音乐信息(指定首) - 检测到指定首(第${index_}首)的音乐无法下载, 即将自动匹配下一首"
+                    Plum.logger.debug(
+                        "$logTypeName >> 获取的音乐信息(指定首) - 检测到指定首(第${index_}首)的音乐无法下载, 即将自动匹配下一首"
                     )
                     index_++
                     i++
@@ -129,8 +136,9 @@ object ApiNeteaseCloudMusic : AbstractApiMusicPlat(
         return if (result == null) {
             null
         } else {
-            Plum.logger.debug("$logTypeName >> 获取音乐信息(指定首) - 未获取到指定首(第${index_}首)的音乐，默认返回最后一次成功获取的音乐信息: $result"
-        )
+            Plum.logger.debug(
+                "$logTypeName >> 获取音乐信息(指定首) - 未获取到指定首(第${index_}首)的音乐，默认返回最后一次成功获取的音乐信息: $result"
+            )
             result
         }
     }

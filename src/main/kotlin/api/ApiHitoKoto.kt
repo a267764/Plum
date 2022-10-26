@@ -4,9 +4,10 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.config.PlumConfig
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
-import java.util.*
 
 object ApiHitoKoto {
     private val requestURL: String
@@ -31,6 +32,7 @@ object ApiHitoKoto {
             val from = response["from"].asString
             val creator = response["creator"].asString
             val created_at = response["created_at"].asString
+
             /** 封装JSON数据  */
             val result = Sentence(
                 id, content, type, from, creator,
@@ -60,7 +62,8 @@ object ApiHitoKoto {
             } catch (e: IOException) {
                 Plum.logger.error(e)
             }
-            Plum.logger.debug("HitoKoto >> Get Random Sentence >> Response: JSON = $JSON"
+            Plum.logger.debug(
+                "HitoKoto >> Get Random Sentence >> Response: JSON = $JSON"
             )
             /** 关闭Response的body  */
             response?.body?.close()

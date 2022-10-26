@@ -4,12 +4,12 @@ import com.sakurawald.api.KugouMusicAPI
 import com.sakurawald.api.MusicPlatAPI
 import com.sakurawald.api.NeteaseCloudMusicAPI
 import com.sakurawald.api.TencentMusicAPI
-import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.exception.CanNotDownloadFileException
 import com.sakurawald.exception.FileTooBigException
 import com.sakurawald.framework.BotManager
 import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.Plum
+import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.plum.reloaded.command.RobotCommand
 import com.sakurawald.plum.reloaded.command.RobotCommandChatType
 import com.sakurawald.plum.reloaded.command.RobotCommandUser

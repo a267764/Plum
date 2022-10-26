@@ -18,7 +18,13 @@ abstract class RobotCommand(
 ) {
     val pattern = Pattern.compile(rule)
     fun isThisCommand(msg: String): Boolean = pattern.matcher(msg).matches()
-    suspend fun runCheckUp(msgType: Int, time: Int, fromGroup: Group?, fromQQ: User, messageChain: MessageChain): Boolean {
+    suspend fun runCheckUp(
+        msgType: Int,
+        time: Int,
+        fromGroup: Group?,
+        fromQQ: User,
+        messageChain: MessageChain
+    ): Boolean {
         if (!ranges.any { it.type == msgType }) {
             sendMessageBySituation(fromGroup, fromQQ, "很抱歉，该指令不能在当前聊天类型中使用。");
             return false
@@ -47,6 +53,7 @@ abstract class RobotCommand(
  * */
 enum class RobotCommandChatType(var type: Int) {
     FRIEND_CHAT(1000), GROUP_CHAT(2000), GROUP_TEMP_CHAT(3000), DISCUSS_MSG(4000), STRANGER_CHAT(5000);
+
     companion object {
         @JvmStatic
         fun MessageEvent.toMessageType(): RobotCommandChatType? = when (this) {
@@ -67,8 +74,8 @@ enum class RobotCommandUser(var userPermission: Int) {
     companion object {
         /** 判断用户的权限.  */
         fun getAuthority(fromGroup: Group?, fromQQ: User): Int = (
-                    if (fromGroup != null) getAuthorityByQQ(fromGroup, fromQQ)
-                    else getAuthorityByQQ(fromQQ.id)
+                if (fromGroup != null) getAuthorityByQQ(fromGroup, fromQQ)
+                else getAuthorityByQQ(fromQQ.id)
                 ).also {
                 Plum.logger.debug("Permission fromGroup = ${fromGroup?.id ?: "null"}, fromQQ = $fromQQ.id, authority：$it")
             }

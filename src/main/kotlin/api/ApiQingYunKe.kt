@@ -3,8 +3,10 @@ package com.sakurawald.plum.reloaded.api
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sakurawald.plum.reloaded.Plum
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import utils.NetworkUtil
-import okhttp3.*
 import java.io.IOException
 
 object ApiQingYunKe {
@@ -50,7 +52,8 @@ object ApiQingYunKe {
         } catch (e: IOException) {
             Plum.logger.error(e)
         }
-        Plum.logger.debug("QingYunKe >> Get Answer >> Response: JSON = $json"
+        Plum.logger.debug(
+            "QingYunKe >> Get Answer >> Response: JSON = $json"
         )
         /** 关闭Response的body  */
         response?.body?.close()

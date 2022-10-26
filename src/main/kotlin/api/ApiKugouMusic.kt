@@ -5,13 +5,13 @@ import com.google.gson.JsonParser
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.utils.MD5Util
-import utils.NetworkUtil
 import net.mamoe.mirai.message.data.MusicKind
 import net.mamoe.mirai.message.data.MusicShare
 import net.mamoe.mirai.message.data.toMessageChain
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import utils.NetworkUtil
 import java.io.IOException
 import java.util.*
 
@@ -40,6 +40,7 @@ object ApiKugouMusic : AbstractApiMusicPlat(
     private fun getDownloadMusicURL(si: SongInformation): SongInformation? {
         /** 获取JSON  */
         val JSON = getDownloadMusicURL_JSON(si.hash)
+
         /** 解析JSON  */
         val jo = JsonParser.parseString(JSON) as JsonObject
         val status = jo["status"].asInt
@@ -93,7 +94,8 @@ object ApiKugouMusic : AbstractApiMusicPlat(
         } catch (e: IOException) {
             Plum.logger.error(e)
         } finally {
-            Plum.logger.debug("$logTypeName >> 解析音乐下载地址 - 结果: Code = "
+            Plum.logger.debug(
+                "$logTypeName >> 解析音乐下载地址 - 结果: Code = "
                         + response!!.message + ", Response = " + JSON
             )
         }
@@ -106,7 +108,8 @@ object ApiKugouMusic : AbstractApiMusicPlat(
      * 通过音乐名称，获取酷狗音乐的音乐列表JSON
      */
     override fun getMusicListByMusicName_JSON(music_name: String): String? {
-        Plum.logger.debug("$logTypeName >> 搜索音乐列表 - 请求: music_name = "
+        Plum.logger.debug(
+            "$logTypeName >> 搜索音乐列表 - 请求: music_name = "
                     + music_name
         )
         var result: String? = null
@@ -130,7 +133,8 @@ object ApiKugouMusic : AbstractApiMusicPlat(
         } catch (e: IOException) {
             Plum.logger.error(e)
         } finally {
-            Plum.logger.debug("$logTypeName >> 搜索音乐列表 - 结果: Code = "
+            Plum.logger.debug(
+                "$logTypeName >> 搜索音乐列表 - 结果: Code = "
                         + response!!.message + ", Response = " + JSON
             )
         }
@@ -154,6 +158,7 @@ object ApiKugouMusic : AbstractApiMusicPlat(
         if (!validSongList(jo)) return null
 
         val data = jo.getAsJsonObject("data")
+
         /** 注意：网易api的songCount参数似乎有问题，有时候有歌曲，也返回0  */
         var result: SongInformation? = null
         var i = 1

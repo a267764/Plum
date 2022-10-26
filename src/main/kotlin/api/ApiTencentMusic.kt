@@ -3,13 +3,15 @@ package com.sakurawald.plum.reloaded.api
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.plum.reloaded.Plum
-import utils.NetworkUtil
+import com.sakurawald.plum.reloaded.SongInformation
 import net.mamoe.mirai.message.data.MusicKind
 import net.mamoe.mirai.message.data.MusicShare
 import net.mamoe.mirai.message.data.toMessageChain
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import utils.NetworkUtil
 import java.io.IOException
 import java.util.*
 
@@ -42,7 +44,8 @@ object ApiTencentMusic : AbstractApiMusicPlat(
         get() = ArrayList(Arrays.asList("qq音乐", "qq", "腾讯音乐", "腾讯"))
 
     override fun getMusicListByMusicName_JSON(music_name: String): String? {
-        Plum.logger.debug("QQ Music - API >> 搜索音乐列表 - 请求: music_name = "
+        Plum.logger.debug(
+            "QQ Music - API >> 搜索音乐列表 - 请求: music_name = "
                     + music_name
         )
         var result: String? = null
@@ -60,7 +63,8 @@ object ApiTencentMusic : AbstractApiMusicPlat(
         } catch (e: IOException) {
             Plum.logger.error(e)
         } finally {
-            Plum.logger.debug("QQ Music - API >> 搜索音乐列表 - 结果: Code = "
+            Plum.logger.debug(
+                "QQ Music - API >> 搜索音乐列表 - 结果: Code = "
                         + response!!.message + ", Response = " + JSON
             )
         }

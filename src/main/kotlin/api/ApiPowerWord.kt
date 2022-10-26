@@ -3,8 +3,8 @@ package com.sakurawald.plum.reloaded.api
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sakurawald.plum.reloaded.Plum
-import utils.DateUtil
 import okhttp3.*
+import utils.DateUtil
 import java.io.IOException
 import java.util.*
 
@@ -43,6 +43,7 @@ object ApiPowerWord {
             val picture3 = response["picture3"].asString
             val picture4 = response["picture4"].asString
             val fenxiang_img = response["fenxiang_img"].asString
+
             /** 封装JSON数据  */
             val result = Motto()
             result.dateline = dateline
@@ -79,7 +80,8 @@ object ApiPowerWord {
             } catch (e: IOException) {
                 Plum.logger.error(e)
             }
-            Plum.logger.debug("PowerWord >> Get Random Motto >> Response: JSON = $JSON"
+            Plum.logger.debug(
+                "PowerWord >> Get Random Motto >> Response: JSON = $JSON"
             )
             /** Close.  */
             response?.body?.close()
@@ -115,6 +117,7 @@ object ApiPowerWord {
 
         companion object {
             val NULL_MOTTO = Motto()
+
             @JvmStatic
             val defaultMotto: Motto
                 get() {

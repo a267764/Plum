@@ -6,7 +6,10 @@ import com.sakurawald.plum.reloaded.function.NudgeFunction
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
-import net.mamoe.mirai.event.events.*
+import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
+import net.mamoe.mirai.event.events.BotOnlineEvent
+import net.mamoe.mirai.event.events.NewFriendRequestEvent
+import net.mamoe.mirai.event.events.NudgeEvent
 import net.mamoe.mirai.event.globalEventChannel
 
 object Plum : KotlinPlugin(

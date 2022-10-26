@@ -1,14 +1,14 @@
 package com.sakurawald.plum.reloaded.api
 
 import com.google.gson.JsonObject
-import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.exception.CanNotDownloadFileException
 import com.sakurawald.exception.FileTooBigException
 import com.sakurawald.framework.BotManager
 import com.sakurawald.plum.reloaded.Plum
+import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.utils.LanguageUtil
-import utils.NetworkUtil
 import com.sakurawald.utils.NumberUtil
+import utils.NetworkUtil
 import java.io.File
 
 /**
@@ -19,6 +19,7 @@ abstract class AbstractApiMusicPlat(
     private var download_music_file_prefix: String,
 ) {
     abstract fun getCardCode(si: SongInformation): String
+
     /**
      * 传入音乐平台, 自动根据配置获取SongInformation
      */

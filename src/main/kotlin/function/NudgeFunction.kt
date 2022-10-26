@@ -1,10 +1,10 @@
 package com.sakurawald.plum.reloaded.function
+
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.api.ApiHitoKoto
 import com.sakurawald.plum.reloaded.api.ApiThirdPartyRandomImage
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.utils.sendMessageBySituation
-import utils.NetworkUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.contact.Group
@@ -12,6 +12,7 @@ import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.event.events.NudgeEvent
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
+import utils.NetworkUtil
 
 object NudgeFunction : FunctionManager() {
 

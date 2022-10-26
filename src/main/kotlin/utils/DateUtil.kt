@@ -1,10 +1,5 @@
 package utils
 
-import com.sakurawald.plum.reloaded.Plum
-import utils.DateUtil.setZero
-import java.text.DateFormat
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
 
 object DateUtil {
@@ -67,7 +62,7 @@ object DateUtil {
         it[Calendar.MINUTE] = 0
     }
 
-    fun Calendar.setZero(): Calendar = also{
+    fun Calendar.setZero(): Calendar = also {
         it[Calendar.HOUR_OF_DAY] = 0
         it[Calendar.MINUTE] = 0
     }
@@ -75,6 +70,7 @@ object DateUtil {
     fun Date.toCalendar(): Calendar = Calendar.getInstance().also {
         it.time = this
     }
+
     fun Long.toCalendar(): Calendar = toDate().toCalendar()
     fun Long.toDate(): Date = Date(this)
 }

@@ -1,17 +1,17 @@
 package com.sakurawald.plum.reloaded.timer.timers
 
+import Countdown
 import com.sakurawald.api.PowerWord_API
 import com.sakurawald.api.PowerWord_API.Motto
-import Countdown
-import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.framework.MessageManager
+import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.timer.DefaultPlan
-import utils.DateUtil
-import utils.NetworkUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
+import utils.DateUtil
+import utils.NetworkUtil
 
 object DailySentenceTimer : DailyTimer(
     "DailyPoetry", 1000 * 10, 1000 * 60
