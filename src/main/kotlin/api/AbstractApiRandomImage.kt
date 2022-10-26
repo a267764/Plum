@@ -1,7 +1,7 @@
 package com.sakurawald.plum.reloaded.api
 
 import com.sakurawald.plum.reloaded.Plum
-import com.sakurawald.utils.NetworkUtil
+import utils.NetworkUtil
 import java.io.File
 import java.net.MalformedURLException
 import java.net.URL

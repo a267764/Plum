@@ -6,7 +6,7 @@ import okhttp3.*
 import java.io.IOException
 import java.util.*
 
-class ApiThirdPartyRandomImage : AbstractApiRandomImage() {
+object ApiThirdPartyRandomImage : AbstractApiRandomImage() {
     /** 此处获取该Random Page返回的随机图片URL  */
     /** 关闭Response的body  */
     /**
@@ -33,16 +33,14 @@ class ApiThirdPartyRandomImage : AbstractApiRandomImage() {
             return result
         }
 
-    companion object {
-        private val random_Image_Website_URLs
-            get() = PlumConfig.functions.AtFunction.RandomImage.Random_Image_URLs
+    private val random_Image_Website_URLs
+        get() = PlumConfig.functions.AtFunction.RandomImage.Random_Image_URLs
 
-        private val randomImageWebsiteURL: String
-            get() {
-                val n = Random().nextInt(random_Image_Website_URLs.size)
-                return random_Image_Website_URLs[n].also {
-                    Plum.logger.debug("RandomImage (ThirdParty) >> Currently Use Image-Site: $it")
-                }
+    private val randomImageWebsiteURL: String
+        get() {
+            val n = Random().nextInt(random_Image_Website_URLs.size)
+            return random_Image_Website_URLs[n].also {
+                Plum.logger.debug("RandomImage (ThirdParty) >> Currently Use Image-Site: $it")
             }
-    }
+        }
 }

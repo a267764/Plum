@@ -23,7 +23,7 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
             }
 
             val QQFriendInvitation by value(IMQQFriendInvitation())
-            val QQGroupInvitation by value(IMQQFriendInvitation())
+            val QQGroupInvitation by value(IMQQGroupInvitation())
         }
 
         class AdminRobotControl {
@@ -121,7 +121,7 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
                 }
 
                 val SendToFriend by value(SDSendToFriend())
-                val SendToGroup by value(SDSendToFriend())
+                val SendToGroup by value(SDSendToGroup())
             }
 
             val SendDelay by value(SSendDelay())

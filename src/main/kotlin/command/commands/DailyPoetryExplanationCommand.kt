@@ -6,7 +6,7 @@ import com.sakurawald.plum.reloaded.command.RobotCommandChatType
 import com.sakurawald.plum.reloaded.command.RobotCommandUser
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.timer.timers.DailyPoetry_Timer
-import com.sakurawald.utils.DateUtil
+import utils.DateUtil
 import net.mamoe.mirai.message.data.MessageChain
 
 object DailyPoetryExplanationCommand : RobotCommand(
@@ -44,7 +44,7 @@ object DailyPoetryExplanationCommand : RobotCommand(
         }
 
         var sendMsg = """
-            诗词解读，${DateUtil.getNowYear()}年${DateUtil.getNowMonth()}月${DateUtil.getNowDay()}日！
+            诗词解读，${DateUtil.nowYear}年${DateUtil.nowMonth}月${DateUtil.nowDay}日！
             
             ●今日诗词
             〖标题〗${targetPoetry.title}
@@ -60,7 +60,7 @@ object DailyPoetryExplanationCommand : RobotCommand(
 
         /** 字数检测 **/
         val defaultMsg = """
-            诗词解读，${DateUtil.getNowYear()}年${DateUtil.getNowMonth()}月${DateUtil.getNowDay()}日！
+            诗词解读，${DateUtil.nowYear}年${DateUtil.nowMonth}月${DateUtil.nowDay}日！
             
             ●今日诗词
             〖链接〗由于本次诗词解读文本过长，请直接点击链接查看：

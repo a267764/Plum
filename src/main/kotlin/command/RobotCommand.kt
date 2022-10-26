@@ -1,9 +1,12 @@
 package com.sakurawald.plum.reloaded.command
 
-import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.config.PlumConfig
+import com.sakurawald.plum.reloaded.utils.sendMessageBySituation
+import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.MemberPermission.*
+import net.mamoe.mirai.contact.User
+import net.mamoe.mirai.event.events.*
 import net.mamoe.mirai.message.data.MessageChain
 import java.util.regex.Pattern
 
@@ -15,20 +18,20 @@ abstract class RobotCommand(
 ) {
     val pattern = Pattern.compile(rule)
     fun isThisCommand(msg: String): Boolean = pattern.matcher(msg).matches()
-    fun runCheckUp(msgType: Int, time: Int, fromGroup: Long, fromQQ: Long, messageChain: MessageChain): Boolean {
+    suspend fun runCheckUp(msgType: Int, time: Int, fromGroup: Group?, fromQQ: User, messageChain: MessageChain): Boolean {
         if (!ranges.any { it.type == msgType }) {
-            MessageManager.sendMessageBySituation(fromGroup, fromQQ, "很抱歉，该指令不能在当前聊天类型中使用。");
+            sendMessageBySituation(fromGroup, fromQQ, "很抱歉，该指令不能在当前聊天类型中使用。");
             return false
         }
         val authority = RobotCommandUser.getAuthority(fromGroup, fromQQ)
         if (!users.any { it.userPermission == authority }) {
-            MessageManager.sendMessageBySituation(fromGroup, fromQQ, "很抱歉，您没有权限使用该指令~")
+            sendMessageBySituation(fromGroup, fromQQ, "很抱歉，您没有权限使用该指令~")
             return false
         }
         return true
     }
 
-    abstract fun runCommand(msgType: Int, time: Int, fromGroup: Long, fromQQ: Long, messageChain: MessageChain)
+    abstract fun runCommand(msgType: Int, time: Int, fromGroup: Group?, fromQQ: User, messageChain: MessageChain)
 }
 
 
@@ -44,6 +47,17 @@ abstract class RobotCommand(
  * */
 enum class RobotCommandChatType(var type: Int) {
     FRIEND_CHAT(1000), GROUP_CHAT(2000), GROUP_TEMP_CHAT(3000), DISCUSS_MSG(4000), STRANGER_CHAT(5000);
+    companion object {
+        @JvmStatic
+        fun MessageEvent.toMessageType(): RobotCommandChatType? = when (this) {
+            is FriendMessageEvent -> FRIEND_CHAT
+            is GroupMessageEvent -> GROUP_CHAT
+            is GroupTempMessageEvent -> GROUP_TEMP_CHAT
+            is StrangerMessageEvent -> STRANGER_CHAT
+            else -> null
+        }
+
+    }
 }
 
 
@@ -52,26 +66,26 @@ enum class RobotCommandUser(var userPermission: Int) {
 
     companion object {
         /** 判断用户的权限.  */
-        fun getAuthority(fromGroup: Long, fromQQ: Long): Int {
-            val authority: Int = if (fromGroup != -1L) getAuthorityByQQ(fromGroup, fromQQ) else getAuthorityByQQ(fromQQ)
-            Plum.logger.debug(
-                "Permission fromGroup = $fromGroup, fromQQ = $fromQQ, authority：$authority"
-            )
-            return authority
-        }
+        fun getAuthority(fromGroup: Group?, fromQQ: User): Int = (
+                    if (fromGroup != null) getAuthorityByQQ(fromGroup, fromQQ)
+                    else getAuthorityByQQ(fromQQ.id)
+                ).also {
+                Plum.logger.debug("Permission fromGroup = ${fromGroup?.id ?: "null"}, fromQQ = $fromQQ.id, authority：$it")
+            }
 
         /** 单纯通过QQ，判断对方是不是超级管理  */
-        fun getAuthorityByQQ(QQ: Long): Int {
-            if (PlumConfig.admin.botAdministrators.any { it == QQ }) return BOT_ADMINISTRATOR.userPermission
+        fun getAuthorityByQQ(fromQQ: Long): Int {
+            if (PlumConfig.admin.botAdministrators.any { it == fromQQ }) return BOT_ADMINISTRATOR.userPermission
             return NORMAL_USER.userPermission
         }
 
         /** 判断群聊中，对方是不是管理（管理员或群主）  */
-        fun getAuthorityByQQ(fromGroup: Long, fromQQ: Long): Int {
-            val m = Plum.CURRENT_BOT?.getGroup(fromGroup)?.get(fromQQ) ?: return NORMAL_USER.userPermission
+        fun getAuthorityByQQ(fromGroup: Group?, fromQQ: User): Int {
+            val m = fromGroup?.get(fromQQ.id) ?: return NORMAL_USER.userPermission
+
             // [!] 首先判断是不是管理员
             // 防止自己是超级管理员，但又是普通群员
-            if (getAuthorityByQQ(fromQQ) == BOT_ADMINISTRATOR.userPermission) {
+            if (getAuthorityByQQ(fromQQ.id) == BOT_ADMINISTRATOR.userPermission) {
                 return BOT_ADMINISTRATOR.userPermission
             }
             return when (m.permission) {

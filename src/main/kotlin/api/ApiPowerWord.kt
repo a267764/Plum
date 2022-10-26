@@ -3,7 +3,7 @@ package com.sakurawald.plum.reloaded.api
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sakurawald.plum.reloaded.Plum
-import com.sakurawald.utils.DateUtil
+import utils.DateUtil
 import okhttp3.*
 import java.io.IOException
 import java.util.*

@@ -2,7 +2,7 @@ package com.sakurawald.plum.reloaded.api
 
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.config.PlumConfig
-import com.sakurawald.utils.NetworkUtil
+import utils.NetworkUtil
 import java.util.regex.Pattern
 
 object ApiBaiDuHanYu {

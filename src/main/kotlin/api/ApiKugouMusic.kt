@@ -5,7 +5,7 @@ import com.google.gson.JsonParser
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.SongInformation
 import com.sakurawald.utils.MD5Util
-import com.sakurawald.utils.NetworkUtil
+import utils.NetworkUtil
 import net.mamoe.mirai.message.data.MusicKind
 import net.mamoe.mirai.message.data.MusicShare
 import net.mamoe.mirai.message.data.toMessageChain

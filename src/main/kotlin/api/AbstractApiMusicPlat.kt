@@ -7,7 +7,7 @@ import com.sakurawald.exception.FileTooBigException
 import com.sakurawald.framework.BotManager
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.utils.LanguageUtil
-import com.sakurawald.utils.NetworkUtil
+import utils.NetworkUtil
 import com.sakurawald.utils.NumberUtil
 import java.io.File
 

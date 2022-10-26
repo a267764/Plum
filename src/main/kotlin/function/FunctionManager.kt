@@ -1,7 +1,7 @@
 package com.sakurawald.plum.reloaded.function
 
 import com.sakurawald.plum.reloaded.Plum
-import com.sakurawald.utils.DateUtil
+import utils.DateUtil
 import com.sakurawald.utils.NumberUtil
 import java.util.*
 

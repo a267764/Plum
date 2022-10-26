@@ -25,10 +25,6 @@ object Plum : KotlinPlugin(
         logger.debug("PlumReloaded >> Enabling.")
         logger.debug("Start init...")
 
-        // Init CommandSystem.
-        logger.debug("CommandSystem >> Init CommandSystem.")
-        RobotCommandManager
-
         // Init FileSystem.
         logger.debug("FileSystem >> Init FileSystem.");
         PlumConfig.reload()
@@ -36,27 +32,34 @@ object Plum : KotlinPlugin(
         logger.debug("Start to subscribe events")
         val channel = globalEventChannel().exceptionHandler { logger.error(it) }
 
-        channel.subscribeAlways<GroupMessageEvent> {
+        // Init CommandSystem.
+        logger.debug("CommandSystem >> Init CommandSystem.")
+        /** 接收群/好友/陌生人/群临时消息事件 **/
+        RobotCommandManager.initialize(channel)
 
-        }
-        channel.subscribeAlways<FriendMessageEvent> {
-
-        }
-        channel.subscribeAlways<StrangerMessageEvent> {
-
-        }
-        channel.subscribeAlways<GroupTempMessageEvent> {
-
-        }
         channel.subscribeAlways<BotOnlineEvent> {
             if (bot_ == null) bot_ = it.bot
         }
         channel.subscribeAlways<NudgeEvent> { NudgeFunction.handleEvent(it) }
         channel.subscribeAlways<NewFriendRequestEvent> {
-
+            // 自动处理好友邀请
+            if (PlumConfig.admin.InvitationManager.QQFriendInvitation.autoAcceptAddQQFriend) {
+                // 同意 -> 好友添加请求
+                logger.debug(
+                    "ContactSystem >> Accept -> FriendAddRequest: $fromId"
+                )
+                accept()
+            }
+            // 不自动拒绝
+            // else reject(false)
         }
         channel.subscribeAlways<BotInvitedJoinGroupRequestEvent> {
-
+            if (PlumConfig.admin.InvitationManager.QQGroupInvitation.autoAcceptAddQQGroup) {
+                accept()
+                logger.debug(
+                    "ContactSystem >> Accept -> InvitedJoinGroupRequest: $groupId"
+                )
+            }
         }
 
         logger.debug("TimerSystem >> Start TimerSystem.")

@@ -4,18 +4,18 @@ import com.sakurawald.api.BaiDuHanYu_API
 import com.sakurawald.api.JinRiShiCi_API.Poetry
 import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.Plum
-import com.sakurawald.utils.DateUtil
+import utils.DateUtil
 
 object DailyPoetry_Timer : DailyTimer(
     "DailyPoetry", 1000 * 5, 1000 * 60
 ) {
     var todayPoetry: Poetry? = null
     override fun isPrepareStage(): Boolean {
-        val nowDay = DateUtil.getNowDay()
+        val nowDay = DateUtil.nowDay
         if (nowDay != lastPrepareDay) {
-            val nowHour = DateUtil.getNowHour()
+            val nowHour = DateUtil.nowHour
             if (nowHour == 20) {
-                if (DateUtil.getNowMinute() in 55..59) {
+                if (DateUtil.nowMinute in 55..59) {
                     lastPrepareDay = nowDay
                     return true
                 }
@@ -29,10 +29,10 @@ object DailyPoetry_Timer : DailyTimer(
     }
 
     override fun isSendStage(): Boolean {
-        val nowDay = DateUtil.getNowDay()
+        val nowDay = DateUtil.nowDay
         if (nowDay != lastSendDay) {
-            val nowHour = DateUtil.getNowHour()
-            val nowMinute = DateUtil.getNowMinute()
+            val nowHour = DateUtil.nowHour
+            val nowMinute = DateUtil.nowMinute
             if (nowHour == 21 && nowMinute <= 10) {
                 lastSendDay = nowDay
                 return true
@@ -47,7 +47,7 @@ object DailyPoetry_Timer : DailyTimer(
         BaiDuHanYu_API.randomPoetry?.also {
             todayPoetry = it
             sendMsg = """
-                晚安，${DateUtil.getNowYear()}年${DateUtil.getNowMonth()}月${DateUtil.getNowDay()}日~
+                晚安，${DateUtil.nowYear}年${DateUtil.nowMonth}月${DateUtil.nowDay}日~
                 
                 ●今日诗词
                 〖标题〗${it.title}

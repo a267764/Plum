@@ -7,8 +7,8 @@ import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.timer.DefaultPlan
-import com.sakurawald.utils.DateUtil
-import com.sakurawald.utils.NetworkUtil
+import utils.DateUtil
+import utils.NetworkUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
@@ -18,12 +18,12 @@ object DailySentenceTimer : DailyTimer(
 ), DefaultPlan {
     private var todayMotto: Motto? = null
     override fun isPrepareStage(): Boolean {
-        val nowDay = DateUtil.getNowDay()
+        val nowDay = DateUtil.nowDay
         if (nowDay != lastPrepareDay) {
-            val nowHour = DateUtil.getNowHour()
+            val nowHour = DateUtil.nowHour
             // 判断是否是4点，即5点之前
             if (nowHour == 4) {
-                val nowMinute = DateUtil.getNowMinute()
+                val nowMinute = DateUtil.nowMinute
                 if (nowMinute in 55..59) {
                     lastPrepareDay = nowDay
                     return true
@@ -40,10 +40,10 @@ object DailySentenceTimer : DailyTimer(
     }
 
     override fun isSendStage(): Boolean {
-        val nowDay = DateUtil.getNowDay()
+        val nowDay = DateUtil.nowDay
         if (nowDay != lastSendDay) {
-            val nowHour = DateUtil.getNowHour()
-            val nowMinute = DateUtil.getNowMinute()
+            val nowHour = DateUtil.nowHour
+            val nowMinute = DateUtil.nowMinute
             if (nowHour == 5 && nowMinute <= 10) {
                 lastSendDay = nowDay
                 return true
@@ -53,8 +53,8 @@ object DailySentenceTimer : DailyTimer(
     }
 
     override fun prepareStage() {
-        sendMsg = ("早安，" + DateUtil.getNowYear() + "年" + DateUtil.getNowMonth()
-                + "月" + DateUtil.getNowDay() + "日！")
+        sendMsg = ("早安，" + DateUtil.nowYear + "年" + DateUtil.nowMonth
+                + "月" + DateUtil.nowDay + "日！")
 
         /** Function: Countdown. **/
         val cda = Countdown.getCountdownsByCommands()
