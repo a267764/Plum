@@ -19,5 +19,4 @@ dependencies {
     implementation("org.jsoup:jsoup:1.13.1")
     implementation("net.sourceforge.htmlunit:htmlunit:2.50.0")
     implementation("com.squareup.okhttp3:okhttp:4.7.2")
-    // TODO: find and add silk4j
 }
