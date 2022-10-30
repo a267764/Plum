@@ -1,5 +1,8 @@
 package com.sakurawald.plum.reloaded.utils
 
+import com.sakurawald.plum.reloaded.Plum
+import java.io.File
+import java.lang.Character.UnicodeBlock
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -55,11 +58,6 @@ fun formatDigit(number: Double, dight: Int): Double {
     return String.format("%." + dight + "f", number).toDouble()
 }
 
-/** 获取一个足够大的数字  */
-fun getBigEnoughNumber(): Int {
-    return 1000000
-}
-
 /** 输入小数, 返回百分数文本  */
 fun getFormatedPercentage(number: Double): String? {
     return formatDigit(number * 100).toString() + "%"
@@ -91,4 +89,85 @@ fun isNumber(str: String): Boolean {
         }
     }
     return true
+}
+
+
+/**
+ * 对输入字符串的每一个字符进行Unicode Block区间检测, 若发现非 汉语, 英文, 符号之外的Unicode,
+ * 则直接以Unicode码的转移形式表示
+ */
+private val translateValidUnicodeBlocks: Set<UnicodeBlock> = setOf(
+    UnicodeBlock.KATAKANA,
+        UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS,
+        UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS,
+        UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A,
+        UnicodeBlock.GENERAL_PUNCTUATION,
+        UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION,
+        UnicodeBlock.BASIC_LATIN
+)
+
+private val mJapaneseUnicodeBlocks: Set<UnicodeBlock> = setOf(
+        UnicodeBlock.HIRAGANA,
+        UnicodeBlock.KATAKANA
+)
+
+
+
+fun hasJapaneseChar(str: String): Boolean = str.any { mJapaneseUnicodeBlocks.contains(UnicodeBlock.of(it)) }
+
+/** 判断是否全部为韩文  */
+fun hasKoreaChar(inputStr: String): Boolean = inputStr.any {
+    (it.code in 0x3131..0x318e || it.code >= 0xAC00) && (it.code <= 0xD7A3)
+}
+
+/** 输出每个字符的UnicodeBlock  */
+fun printAllCharsUnicodeBlock(str: String) {
+    val arr = str.toCharArray()
+    for (c in arr) {
+        Plum.logger.debug("c = " + UnicodeBlock.of(c))
+    }
+}
+
+/** 将文件名中对Windows不合法的成分都进行转化  */
+fun translateFileName(fileName: String): String {
+    return fileName.replace("/", "or")
+        .replace("\\", "or")
+        .replace(File.separator, "")
+        .replace(File.pathSeparator, "")
+        .replace("&", "and")
+        .replace(":", "Colon")
+        .replace("*", "Star")
+        .replace("?", "QM")
+        .replace("|", "DIV")
+        .replace("<", "LSM")
+        .replace(">", "RSM")
+}
+
+fun translateValidUnicode(str: String): String {
+    val sb = StringBuffer()
+    /** 对字符串中每个字符进行检测  */
+    for (c in str.toCharArray()) {
+        if (!translateValidUnicodeBlocks.contains(UnicodeBlock.of(c))) {
+            sb.append("U=").append(c.code).append(";")
+        } else {
+            sb.append(c)
+        }
+    }
+    return sb.toString()
+}
+
+fun translateValidUnicodeSimple(str: String): String {
+    val sb = StringBuilder()
+    /** 对字符串中每个字符进行检测  */
+    for (c in str.toCharArray()) {
+        if (!translateValidUnicodeBlocks.contains(UnicodeBlock.of(c))) {
+            sb.append("U")
+        } else {
+            sb.append(c)
+        }
+    }
+    return sb.toString()
+}
+fun transObjectX(obj: Int, message: String, newStr: String): String {
+    return message.replace("[OBJECT$obj]", newStr)
 }
