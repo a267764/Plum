@@ -67,7 +67,7 @@ object Plum : KotlinPlugin(
         }
 
         logger.debug("TimerSystem >> Start TimerSystem.")
-        RobotTimerManager.registerAll()
+        RobotTimerManager
 
         logger.debug("End Init...")
     }
