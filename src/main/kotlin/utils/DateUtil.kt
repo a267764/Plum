@@ -1,6 +1,8 @@
 package utils
 
+import java.text.SimpleDateFormat
 import java.util.*
+
 
 object DateUtil {
     val unixTimeS: Long
@@ -19,6 +21,10 @@ object DateUtil {
      */
     fun Calendar.compareDate(date2: Calendar = Calendar.getInstance()): Int =
         (clone() as Calendar).setZero().compareTo((date2.clone() as Calendar).setZero())
+
+    val simpleFormat = SimpleDateFormat("yyyy-MM-dd")
+    fun Calendar.getDateSimple(): String = simpleFormat.format(time)
+
 
     /**
      * 获取两个Date的时间差
