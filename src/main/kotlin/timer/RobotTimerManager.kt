@@ -1,14 +1,14 @@
 package com.sakurawald.plum.reloaded.timer
 
 import com.sakurawald.plum.reloaded.Plum
-import com.sakurawald.plum.reloaded.timer.timers.DailyPoetry_Timer
-import com.sakurawald.plum.reloaded.timer.timers.DailySentenceTimer
+import com.sakurawald.plum.reloaded.timer.timers.TimerDailyPoetry
+import com.sakurawald.plum.reloaded.timer.timers.TimerDailySentence
 import java.util.*
 
 object RobotTimerManager : Timer() {
     val tasks = mutableListOf<RobotAbstractTimer>(
-        DailySentenceTimer,
-        DailyPoetry_Timer
+        TimerDailySentence,
+        TimerDailyPoetry
     )
 
     init {

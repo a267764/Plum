@@ -9,7 +9,7 @@ import net.mamoe.mirai.message.data.toMessageChain
 import net.mamoe.mirai.message.data.toPlainText
 import utils.DateUtil
 
-object DailyPoetry_Timer : DailyTimer(
+object TimerDailyPoetry : DailyTimer(
     "DailyPoetry", 1000 * 5, 1000 * 60
 ) {
     var todayPoetry: ApiJinRiShiCi.Poetry? = null

@@ -15,7 +15,7 @@ import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import utils.DateUtil
 import utils.NetworkUtil
 
-object DailySentenceTimer : DailyTimer(
+object TimerDailySentence : DailyTimer(
     "DailyPoetry", 1000 * 10, 1000 * 60
 ), DefaultPlan {
     private var todayMotto: ApiPowerWord.Motto? = null

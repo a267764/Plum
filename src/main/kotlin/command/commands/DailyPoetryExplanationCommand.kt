@@ -4,7 +4,7 @@ import com.sakurawald.plum.reloaded.command.RobotCommand
 import com.sakurawald.plum.reloaded.command.RobotCommandChatType
 import com.sakurawald.plum.reloaded.command.RobotCommandUser
 import com.sakurawald.plum.reloaded.config.PlumConfig
-import com.sakurawald.plum.reloaded.timer.timers.DailyPoetry_Timer
+import com.sakurawald.plum.reloaded.timer.timers.TimerDailyPoetry
 import com.sakurawald.plum.reloaded.utils.checkLengthAndModifySendMsg
 import com.sakurawald.plum.reloaded.utils.sendMessageBySituation
 import net.mamoe.mirai.contact.Group
@@ -43,7 +43,7 @@ object DailyPoetryExplanationCommand : RobotCommand(
             return
         }
 
-        val targetPoetry = DailyPoetry_Timer.todayPoetry
+        val targetPoetry = TimerDailyPoetry.todayPoetry
         if (targetPoetry == null) {
             sendMessageBySituation(
                 fromGroup, fromQQ,
