@@ -3,6 +3,7 @@ package com.sakurawald.plum.reloaded
 import com.sakurawald.plum.reloaded.command.RobotCommandManager
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.function.NudgeFunction
+import com.sakurawald.plum.reloaded.timer.RobotTimerManager
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
@@ -29,7 +30,7 @@ object Plum : KotlinPlugin(
         logger.debug("Start init...")
 
         // Init FileSystem.
-        logger.debug("FileSystem >> Init FileSystem.");
+        logger.debug("FileSystem >> Init FileSystem.")
         PlumConfig.reload()
 
         logger.debug("Start to subscribe events")
@@ -46,7 +47,7 @@ object Plum : KotlinPlugin(
         channel.subscribeAlways<NudgeEvent> { NudgeFunction.handleEvent(it) }
         channel.subscribeAlways<NewFriendRequestEvent> {
             // 自动处理好友邀请
-            if (PlumConfig.admin.InvitationManager.QQFriendInvitation.autoAcceptAddQQFriend) {
+            if (PlumConfig.admin.invitationManager.friendInvitation.autoAcceptAddQQFriend) {
                 // 同意 -> 好友添加请求
                 logger.debug(
                     "ContactSystem >> Accept -> FriendAddRequest: $fromId"
@@ -57,7 +58,7 @@ object Plum : KotlinPlugin(
             // else reject(false)
         }
         channel.subscribeAlways<BotInvitedJoinGroupRequestEvent> {
-            if (PlumConfig.admin.InvitationManager.QQGroupInvitation.autoAcceptAddQQGroup) {
+            if (PlumConfig.admin.invitationManager.groupInvitation.autoAcceptAddQQGroup) {
                 accept()
                 logger.debug(
                     "ContactSystem >> Accept -> InvitedJoinGroupRequest: $groupId"
@@ -66,7 +67,7 @@ object Plum : KotlinPlugin(
         }
 
         logger.debug("TimerSystem >> Start TimerSystem.")
-        RobotCommandManager
+        RobotTimerManager.registerAll()
 
         logger.debug("End Init...")
     }

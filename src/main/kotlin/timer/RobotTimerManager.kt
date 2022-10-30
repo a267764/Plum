@@ -6,7 +6,7 @@ import com.sakurawald.plum.reloaded.timer.timers.DailySentenceTimer
 import java.util.*
 
 object RobotTimerManager : Timer() {
-    val tasks = mutableListOf(
+    val tasks = mutableListOf<RobotAbstractTimer>(
         DailySentenceTimer,
         DailyPoetry_Timer
     )

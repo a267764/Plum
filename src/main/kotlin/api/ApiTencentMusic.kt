@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.SongInformation
+import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MusicKind
 import net.mamoe.mirai.message.data.MusicShare
 import net.mamoe.mirai.message.data.toMessageChain
@@ -13,7 +14,6 @@ import okhttp3.Request
 import okhttp3.Response
 import utils.NetworkUtil
 import java.io.IOException
-import java.util.*
 
 object ApiTencentMusic : AbstractApiMusicPlat(
     "QQ Music - API",
@@ -31,55 +31,49 @@ object ApiTencentMusic : AbstractApiMusicPlat(
         return payplay == 0
     }
 
-    override fun getCardCode(si: SongInformation): String {
+    override fun getCardCode(si: SongInformation): MessageChain {
         return MusicShare(
-            MusicKind.QQMusic, si.music_Name,
-            si.summary, si.music_Page_URL, si.img_URL,
-            si.music_File_URL,
-            "[点歌] " + si.music_Name
-        ).toMessageChain().serializeToMiraiCode()
+            MusicKind.QQMusic, si.name,
+            si.summary, si.pageUrl, si.imageUrl,
+            si.fileUrl,
+            "[点歌] " + si.name
+        ).toMessageChain()
     }
 
-    override val selectCodes: ArrayList<String>
-        get() = ArrayList(Arrays.asList("qq音乐", "qq", "腾讯音乐", "腾讯"))
+    override val selectCodes: List<String>
+        get() = listOf("qq音乐", "qq", "腾讯音乐", "腾讯")
 
-    override fun getMusicListByMusicName_JSON(music_name: String): String? {
+    override fun getMusicListJson(name: String): String? {
         Plum.logger.debug(
             "QQ Music - API >> 搜索音乐列表 - 请求: music_name = "
-                    + music_name
+                    + name
         )
-        var result: String? = null
+        var json: String? = null
         val client = OkHttpClient()
-        val URL = ("https://c.y.qq.com/soso/fcgi-bin/client_search_cp?aggr=1&cr=1&flag_qc=0&p=1&n=20&w="
-                + NetworkUtil.encodeURL(music_name))
-        val request: Request = Request.Builder().url(URL).get().build()
+        val url = ("https://c.y.qq.com/soso/fcgi-bin/client_search_cp?aggr=1&cr=1&flag_qc=0&p=1&n=20&w="
+                + NetworkUtil.encodeURL(name))
+        val request: Request = Request.Builder().url(url).get().build()
         var response: Response? = null
-        var JSON: String? = null
         try {
             response = client.newCall(request).execute()
-            JSON = response.body!!.string()
-            result = JSON
-            result = deleteBadCode(result)
+            json = deleteBadCode(response.body?.string() ?: "")
         } catch (e: IOException) {
             Plum.logger.error(e)
         } finally {
-            Plum.logger.debug(
-                "QQ Music - API >> 搜索音乐列表 - 结果: Code = "
-                        + response!!.message + ", Response = " + JSON
-            )
+            Plum.logger.debug("QQ Music - API >> 搜索音乐列表 - 结果: Code = ${response?.message}, Response = $json")
         }
         /** 关闭Response的body  */
-        response.body!!.close()
-        return result
+        response?.body?.close()
+        return json
     }
 
-    private fun getDownloadURL_JSON(song_mid: String?): String? {
+    private fun getDownloadUrlJson(song_mid: String?): String? {
         Plum.logger.debug("QQ Music - API >> getDownloadURL_JSON -> Run")
         var result: String? = null
         val client = OkHttpClient()
-        val URL = "http://localhost:3300/song/url?type=320&id=$song_mid"
-        Plum.logger.debug("QQ Music - API >> Request URL >> $URL")
-        val request = Request.Builder().url(URL).get().build()
+        val url = "http://localhost:3300/song/url?type=320&id=$song_mid"
+        Plum.logger.debug("QQ Music - API >> Request URL >> $url")
+        val request = Request.Builder().url(url).get().build()
         var response: Response? = null
         var json: String? = null
         try {
@@ -101,43 +95,43 @@ object ApiTencentMusic : AbstractApiMusicPlat(
     private fun getDownloadURL(song_mid: String?): String {
         /** 获取JSON数据  */
         /** 获取JSON数据  */
-        val JSON = getDownloadURL_JSON(song_mid) ?: return ""
+        val json = getDownloadUrlJson(song_mid) ?: return ""
 
         // 若未找到结果，则返回null
         /** 解析JSON数据  */
-        val jo = JsonParser.parseString(JSON) as JsonObject
+        val jo = JsonParser.parseString(json) as JsonObject
         val response = jo.asJsonObject
         val data = response["data"].asString
         Plum.logger.debug("QQ Music - API >> Get MusicFileURL >> $data")
         return data
     }
 
-    override fun getSongInformationByJSON(
-        getMusicListByMusicName_JSON: String?, index: Int
+    override fun getSongInfoByJson(
+        jsonText: String?, targetIndex: Int
     ): SongInformation? {
         // 若未找到结果，则返回0
-        var index = index
-        if (getMusicListByMusicName_JSON == null || getMusicListByMusicName_JSON.isBlank()) return null
-        val jo = JsonParser.parseString(getMusicListByMusicName_JSON).asJsonObject // 构造JsonObject对象
+        var index = targetIndex
+        if (jsonText.isNullOrBlank()) return null
+        val jo = JsonParser.parseString(jsonText).asJsonObject // 构造JsonObject对象
         val data = jo.getAsJsonObject("data")
-        if (!validSongList(jo)) return null
+        if (!isValidSongList(jo)) return null
 
         var result: SongInformation? = null
         var i = 1
         for (je in data.getAsJsonObject("song").getAsJsonArray("list")) {
             // 获取Si的各个属性
-            val music_name = je.asJsonObject["songname"].asString
-            val music_ID = je.asJsonObject["songid"].asInt
+            val name = je.asJsonObject["songname"].asString
+            val id = je.asJsonObject["songid"].asInt
             val mid = je.asJsonObject["songmid"].asString
 
             // 新建Si对象
             result = SongInformation(
-                music_name, music_ID.toLong(),
-                music_MID = mid
+                name, id.toLong(),
+                mid = mid
             ).also {
                 it.sourceType = "QQ音乐"
-                it.music_Page_URL = "http://y.qq.com/#type=song&id=$music_ID"
-                it.music_File_URL = getDownloadURL(mid)
+                it.pageUrl = "http://y.qq.com/#type=song&id=$id"
+                it.fileUrl = getDownloadURL(mid)
             }
             if (i >= index) {
                 Plum.logger.debug("QQ Music - API >> 获取的音乐信息(指定首) - 成功获取到指定首(第${index}首)的音乐的信息: $result")
@@ -161,8 +155,8 @@ object ApiTencentMusic : AbstractApiMusicPlat(
         }
     }
 
-    override fun validSongList(getMusicListByMusicName_JSON_OBJECT: JsonObject): Boolean {
-        val totalNumber = getMusicListByMusicName_JSON_OBJECT
+    override fun isValidSongList(jsonObj: JsonObject): Boolean {
+        val totalNumber = jsonObj
             .getAsJsonObject("data").getAsJsonObject("song")["totalnum"].asInt
         return totalNumber != 0
     }

@@ -22,17 +22,17 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
                 val autoAcceptAddQQGroup by value(false)
             }
 
-            val QQFriendInvitation by value(IMQQFriendInvitation())
-            val QQGroupInvitation by value(IMQQGroupInvitation())
+            val friendInvitation by value(IMQQFriendInvitation())
+            val groupInvitation by value(IMQQGroupInvitation())
         }
 
         class AdminRobotControl {
-            var forceCancel_GroupMessage by value(false)
-            var forceCancel_FriendMessage by value(true)
+            var forceCancelGroupMessage by value(false)
+            var forceCancelFriendMessage by value(true)
         }
 
-        val InvitationManager by value(AdminInvitationManager())
-        val RobotControl by value(AdminRobotControl())
+        val invitationManager by value(AdminInvitationManager())
+        val robotControl by value(AdminRobotControl())
         val botAdministrators by value(listOf(3172906506L))
     }
 
@@ -44,7 +44,7 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
 
         class FunctionsDailyCountdown {
             var enable by value(true)
-            var countdown_commands by value(
+            var countdownCommands by value(
                 listOf(
                     "◆距离2021年高考还有\$diff_days天！|1623027804000|高考加油！&高考加油！&2021年高考已结束~",
                     "◆距离2020年考研还有\$diff_days天！|1608512604000|考研加油&考研加油&考研加油&2020年考研已结束~",
@@ -58,8 +58,8 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
                 var token by value("paOa0DqOdpLn4FVVHNtEDgU5Imk89kXZ")
             }
 
-            val JinRiShiCi by value(DPJinRiShiCi())
-            var explanation_Enable by value(true)
+            val jinRiShiCi by value(DPJinRiShiCi())
+            var explanationEnable by value(true)
             var maxRetryLimit by value(3)
         }
 
@@ -67,7 +67,7 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
             val enable by value(false)
 
             class AFRandomImage {
-                var Random_Image_URLs by value(
+                var randomImageURLs by value(
                     listOf(
                         "http://www.dmoe.cc/random.php",
                         "http://api.mtyqx.cn/tapi/random.php",
@@ -76,17 +76,17 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
                 )
             }
 
-            val RandomImage by value(AFRandomImage())
+            val randomImage by value(AFRandomImage())
         }
 
         class FunctionsNudgeFunction {
             class NFHitoKoto {
-                var get_URL_Params by value("")
+                var getURLParams by value("")
             }
 
             var enable by value(true)
             var perUseIntervalSecond by value(3)
-            val HitoKoto by value(NFHitoKoto())
+            val hitoKoto by value(NFHitoKoto())
         }
 
         class FunctionsSingSongFunction {
@@ -94,17 +94,17 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
             var forceSendCard by value(false)
             var perUseIntervalSecond by value(5)
             var maxVoiceFileSize by value(15000000)
-            var music_need_paid_msg by value("很抱歉，这可能是一首付费歌曲。")
-            var download_music_file_too_big_msg by value("这首歌太长啦！")
-            var not_found_music_msg by value("哎呀，咱还不会《[OBJECT1]》这首歌！")
+            var msgMusicNeedPaid by value("很抱歉，这可能是一首付费歌曲。")
+            var msgDownloadMusicFileTooBig by value("这首歌太长啦！")
+            var msgNotFoundMusic by value("哎呀，咱还不会《[OBJECT1]》这首歌！")
         }
 
-        val FunctionManager by value(FunctionsFunctionManager())
-        val DailyCountdown by value(FunctionsDailyCountdown())
-        val DailyPoetry by value(FunctionsDailyPoetry())
-        val AtFunction by value(FunctionsAtFunction())
-        val NudgeFunction by value(FunctionsNudgeFunction())
-        val SingSongFunction by value(FunctionsSingSongFunction())
+        val functionManager by value(FunctionsFunctionManager())
+        val dailyCountdown by value(FunctionsDailyCountdown())
+        val dailyPoetry by value(FunctionsDailyPoetry())
+        val atFunction by value(FunctionsAtFunction())
+        val nudgeFunction by value(FunctionsNudgeFunction())
+        val singSongFunction by value(FunctionsSingSongFunction())
     }
 
     class PlumConfigSystem {
@@ -117,18 +117,18 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
 
                 class SDSendToGroup {
                     var enable by value(true)
-                    var delayTimeMS by value(1000)
+                    var delayTimeMS by value(1000L)
                 }
 
-                val SendToFriend by value(SDSendToFriend())
-                val SendToGroup by value(SDSendToGroup())
+                val sendToFriend by value(SDSendToFriend())
+                val sendToGroup by value(SDSendToGroup())
             }
 
-            val SendDelay by value(SSendDelay())
+            val sendDelay by value(SSendDelay())
             val sendMsgMaxLength by value(4500)
         }
 
-        val SendSystem by value(SystemSendSystem())
+        val sendSystem by value(SystemSendSystem())
     }
 
     val debug by value(PlumConfigDebug())

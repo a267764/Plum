@@ -11,7 +11,7 @@ import java.io.IOException
 
 object ApiHitoKoto {
     private val requestURL: String
-        get() = "https://v1.hitokoto.cn" + PlumConfig.functions.NudgeFunction.HitoKoto.get_URL_Params
+        get() = "https://v1.hitokoto.cn" + PlumConfig.functions.nudgeFunction.hitoKoto.getURLParams
     /** 封装JSON数据  */
     /** 解析JSON数据  */
     /** 获取JSON数据  */
@@ -20,23 +20,23 @@ object ApiHitoKoto {
         get() {
             /** 获取JSON数据  */
             /** 获取JSON数据  */
-            val JSON = randomSentence_JSON ?: return Sentence.NULL_SENTENCE
+            val json = randomSentence_JSON ?: return Sentence.NULL_SENTENCE
 
             // 若未找到结果，则返回null
             /** 解析JSON数据  */
-            val jo = JsonParser.parseString(JSON) as JsonObject
+            val jo = JsonParser.parseString(json) as JsonObject
             val response = jo.asJsonObject
             val id = response["id"].asInt
             val content = response["hitokoto"].asString
             val type = response["type"].asString
             val from = response["from"].asString
             val creator = response["creator"].asString
-            val created_at = response["created_at"].asString
+            val createdAt = response["created_at"].asString
 
             /** 封装JSON数据  */
             val result = Sentence(
                 id, content, type, from, creator,
-                created_at
+                createdAt
             )
             Plum.logger.debug("HitoKoto >> Get Sentence >> $result")
             return result
@@ -44,26 +44,24 @@ object ApiHitoKoto {
 
     /** 关闭Response的body  */
     private val randomSentence_JSON: String?
-        private get() {
+        get() {
             Plum.logger.debug("HitoKoto >> Get Random Sentence -> Run")
             var result: String? = null
             val client = OkHttpClient()
-            var request: Request? = null
-            val URL = requestURL
-            Plum.logger.debug("HitoKoto >> Request URL >> $URL")
-            request = Request.Builder().url(URL).get().build()
+            Plum.logger.debug("HitoKoto >> Request URL >> $requestURL")
+            val request = Request.Builder().url(requestURL).get().build()
             var response: Response? = null
-            var JSON: String? = null
+            var json: String? = null
             try {
                 response = client.newCall(request).execute()
                 Plum.logger.debug("HitoKoto >> Request Response >> $response")
-                JSON = response.body!!.string()
-                result = JSON
+                json = response.body!!.string()
+                result = json
             } catch (e: IOException) {
                 Plum.logger.error(e)
             }
             Plum.logger.debug(
-                "HitoKoto >> Get Random Sentence >> Response: JSON = $JSON"
+                "HitoKoto >> Get Random Sentence >> Response: JSON = $json"
             )
             /** 关闭Response的body  */
             response?.body?.close()
@@ -81,7 +79,7 @@ object ApiHitoKoto {
         /**
          * @return 格式化后的文本, 可用于快速展示. 本身为空则返回null.
          */
-        val formatedString: String?
+        val formattedString: String?
             get() = if (content == null && from == null) {
                 null
             } else "『$content』-「$from」"

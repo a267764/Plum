@@ -1,16 +1,20 @@
 package com.sakurawald.plum.reloaded.timer.timers
 
-import com.sakurawald.api.BaiDuHanYu_API
-import com.sakurawald.api.JinRiShiCi_API.Poetry
-import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.Plum
+import com.sakurawald.plum.reloaded.api.ApiBaiDuHanYu
+import com.sakurawald.plum.reloaded.api.ApiJinRiShiCi
+import com.sakurawald.plum.reloaded.utils.sendToAllFriends
+import com.sakurawald.plum.reloaded.utils.sendToAllGroups
+import net.mamoe.mirai.message.data.toMessageChain
+import net.mamoe.mirai.message.data.toPlainText
 import utils.DateUtil
 
 object DailyPoetry_Timer : DailyTimer(
     "DailyPoetry", 1000 * 5, 1000 * 60
 ) {
-    var todayPoetry: Poetry? = null
-    override fun isPrepareStage(): Boolean {
+    var todayPoetry: ApiJinRiShiCi.Poetry? = null
+    override val isPrepareStage: Boolean
+        get() {
         val nowDay = DateUtil.nowDay
         if (nowDay != lastPrepareDay) {
             val nowHour = DateUtil.nowHour
@@ -28,7 +32,8 @@ object DailyPoetry_Timer : DailyTimer(
         return false
     }
 
-    override fun isSendStage(): Boolean {
+    override val isSendStage: Boolean
+        get() {
         val nowDay = DateUtil.nowDay
         if (nowDay != lastSendDay) {
             val nowHour = DateUtil.nowHour
@@ -42,9 +47,8 @@ object DailyPoetry_Timer : DailyTimer(
     }
 
     override fun prepareStage() {
-
         /** 准备sendMsg  */
-        BaiDuHanYu_API.randomPoetry?.also {
+        ApiBaiDuHanYu.getRandomPoetry()?.also {
             todayPoetry = it
             sendMsg = """
                 晚安，${DateUtil.nowYear}年${DateUtil.nowMonth}月${DateUtil.nowDay}日~
@@ -54,13 +58,15 @@ object DailyPoetry_Timer : DailyTimer(
                 〖作者〗（${it.dynasty}） ${it.author}
                 〖诗词〗
                 ${it.content}
-            """.trimIndent()
+            """.trimIndent().toPlainText().toMessageChain()
+            Plum.logger.debug("TimerSystem >> DailyPoetry: \n$sendMsg")
         }
-        Plum.logger.debug("TimerSystem >> DailyPoetry: \n$sendMsg")
     }
 
-    override fun sendStage() {
-        MessageManager.sendMessageToAllQQFriends(sendMsg)
-        MessageManager.sendMessageToAllQQGroups(sendMsg)
+    override suspend fun sendStage() {
+        Plum.CURRENT_BOT?.let {
+            it.sendToAllFriends(sendMsg)
+            it.sendToAllGroups(sendMsg)
+        }
     }
 }

@@ -59,7 +59,7 @@ fun formatDigit(number: Double, dight: Int): Double {
 }
 
 /** 输入小数, 返回百分数文本  */
-fun getFormatedPercentage(number: Double): String? {
+fun getFormattedPercentage(number: Double): String {
     return formatDigit(number * 100).toString() + "%"
 }
 

@@ -1,5 +1,7 @@
 package com.sakurawald.plum.reloaded.timer
 
+import com.sakurawald.plum.reloaded.Plum
+import kotlinx.coroutines.launch
 import java.util.*
 
 abstract class RobotAbstractTimer(
@@ -17,16 +19,16 @@ interface TimerController {
     val isSendStage: Boolean
 
     fun prepareStage()
-    fun sendStage()
+    suspend fun sendStage()
     fun autoControlTimer() {
-        Thread {
+        Plum.launch {
             if (isPrepareStage) {
                 prepareStage()
             }
             if (isSendStage) {
                 sendStage()
             }
-        }.start()
+        }
     }
 }
 

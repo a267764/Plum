@@ -1,14 +1,16 @@
 package com.sakurawald.plum.reloaded.timer.timers
 
-import Countdown
-import com.sakurawald.api.PowerWord_API
-import com.sakurawald.api.PowerWord_API.Motto
-import com.sakurawald.framework.MessageManager
+import com.sakurawald.plum.reloaded.Countdown
 import com.sakurawald.plum.reloaded.Plum
+import com.sakurawald.plum.reloaded.api.ApiPowerWord
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.timer.DefaultPlan
+import com.sakurawald.plum.reloaded.utils.sendToAllFriends
+import com.sakurawald.plum.reloaded.utils.sendToAllGroups
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import net.mamoe.mirai.message.data.toMessageChain
+import net.mamoe.mirai.message.data.toPlainText
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import utils.DateUtil
 import utils.NetworkUtil
@@ -16,8 +18,9 @@ import utils.NetworkUtil
 object DailySentenceTimer : DailyTimer(
     "DailyPoetry", 1000 * 10, 1000 * 60
 ), DefaultPlan {
-    private var todayMotto: Motto? = null
-    override fun isPrepareStage(): Boolean {
+    private var todayMotto: ApiPowerWord.Motto? = null
+    override val isPrepareStage: Boolean
+        get() {
         val nowDay = DateUtil.nowDay
         if (nowDay != lastPrepareDay) {
             val nowHour = DateUtil.nowHour
@@ -39,7 +42,8 @@ object DailySentenceTimer : DailyTimer(
         return false
     }
 
-    override fun isSendStage(): Boolean {
+    override val isSendStage: Boolean
+        get() {
         val nowDay = DateUtil.nowDay
         if (nowDay != lastSendDay) {
             val nowHour = DateUtil.nowHour
@@ -53,17 +57,17 @@ object DailySentenceTimer : DailyTimer(
     }
 
     override fun prepareStage() {
-        sendMsg = ("早安，" + DateUtil.nowYear + "年" + DateUtil.nowMonth
+        var send = ("早安，" + DateUtil.nowYear + "年" + DateUtil.nowMonth
                 + "月" + DateUtil.nowDay + "日！")
 
         /** Function: Countdown. **/
-        val cda = Countdown.getCountdownsByCommands()
-        if (PlumConfig.functions.DailyCountdown.enable && cda.size != 0) {
-            sendMsg += "\n\n●倒计时："
+        val cda = Countdown.countdownsByCommands
+        if (PlumConfig.functions.dailyCountdown.enable && cda.isNotEmpty()) {
+            send += "\n\n●倒计时："
             /** Append all countdowns.  */
             for (cd in cda) {
-                sendMsg = """
-                    $sendMsg
+                send = """
+                    $send
                     ${cd.todayCountdownMsg}
                     """.trimIndent()
             }
@@ -71,47 +75,45 @@ object DailySentenceTimer : DailyTimer(
         /** Function: DailySentence.  */
         defaultPlan()
         try {
-            todayMotto = PowerWord_API.todayMotto
+            todayMotto = ApiPowerWord.todayMotto
         } catch (e: Exception) {
             // Do nothing.
         }
 
-        sendMsg = """${sendMsg?.trim { it <= ' ' }}
+        send = """${send.trim { it <= ' ' }}
             
             ●今日格言：
-            ${todayMotto?.content_cn}( ${todayMotto?.content_en} )"""
+            ${todayMotto?.contentCN}( ${todayMotto?.contentEN} )"""
 
         // Has Translation ?
         if (todayMotto?.translation != null) {
-            sendMsg += """
+            send += """
                 〖解读〗${todayMotto!!.translation}
                         """.trimIndent()
         }
         runBlocking(Dispatchers.IO) {
             try {
+                sendMsg = send.toPlainText().toMessageChain()
                 // Add Sentence's ShareImg.
-                val uploadImage = NetworkUtil.getInputStream(todayMotto!!.fenxiang_img).uploadAsImage(
-                    PluginMain.getCurrentBot().groups.stream().findAny().get()
-                )
-                sendMsg += """
-                [mirai:image:${uploadImage.imageId}]
-                """.trimIndent()
+                Plum.CURRENT_BOT?.groups?.firstOrNull()?.let {
+                    NetworkUtil.getInputStream(todayMotto?.shareImage)?.uploadAsImage(it)
+                }?.let { sendMsg = sendMsg?.plus(it) }
             } catch (e: Exception) {
                 // Do nothing.
             }
-
-            Plum.logger.debug("TimerSystem >> Daily Sentence: \n$sendMsg")
+            Plum.logger.debug("TimerSystem >> Daily Sentence: \n$send")
         }
     }
 
-    override fun sendStage() {
-        MessageManager.sendMessageToAllQQFriends(sendMsg)
-        MessageManager.sendMessageToAllQQGroups(sendMsg)
-
+    override suspend fun sendStage() {
+        Plum.CURRENT_BOT?.let {
+            it.sendToAllFriends(sendMsg)
+            it.sendToAllGroups(sendMsg)
+        }
     }
 
     override fun defaultPlan() {
-        todayMotto = PowerWord_API.Motto.defaultMotto
+        todayMotto = ApiPowerWord.Motto.defaultMotto
 
     }
 

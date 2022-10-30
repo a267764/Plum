@@ -2,21 +2,27 @@ package com.sakurawald.plum.reloaded.command
 
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.command.RobotCommandChatType.Companion.toMessageType
+import com.sakurawald.plum.reloaded.command.commands.DailyPoetryExplanationCommand
 import com.sakurawald.plum.reloaded.command.commands.HelpCommand
 import com.sakurawald.plum.reloaded.command.commands.ReloadCommand
+import com.sakurawald.plum.reloaded.command.commands.SingSongCommand
 import com.sakurawald.plum.reloaded.config.PlumConfig
+import com.sakurawald.plum.reloaded.function.AtFunction
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.event.Event
 import net.mamoe.mirai.event.EventChannel
 import net.mamoe.mirai.event.events.GroupAwareMessageEvent
+import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.message.data.MessageChain
 
 object RobotCommandManager {
     val commands = mutableListOf(
         HelpCommand,
-        ReloadCommand
+        ReloadCommand,
+        SingSongCommand,
+        DailyPoetryExplanationCommand
     )
 
     fun initialize(channel: EventChannel<Event>) {
@@ -27,6 +33,7 @@ object RobotCommandManager {
                 receiveMessage(type, time, group, user, message)
             }
         }
+        channel.subscribeAlways<GroupMessageEvent> { AtFunction.handleEvent(it) }
     }
 
     // TODO: 判断某条信息是否为指令，快速判断，防止网络攻击，优化性能

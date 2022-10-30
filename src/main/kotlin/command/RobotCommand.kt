@@ -11,12 +11,12 @@ import net.mamoe.mirai.message.data.MessageChain
 import java.util.regex.Pattern
 
 abstract class RobotCommand(
-    val rule: String,
+    rule: String,
     // 表示该指令的使用范围，允许什么类型的聊天使用
-    val ranges: MutableList<RobotCommandChatType> = mutableListOf(),
-    val users: MutableList<RobotCommandUser> = mutableListOf()
+    private val ranges: MutableList<RobotCommandChatType> = mutableListOf(),
+    private val users: MutableList<RobotCommandUser> = mutableListOf()
 ) {
-    val pattern = Pattern.compile(rule)
+    val pattern: Pattern = Pattern.compile(rule)
     fun isThisCommand(msg: String): Boolean = pattern.matcher(msg).matches()
     suspend fun runCheckUp(
         msgType: Int,
@@ -26,7 +26,7 @@ abstract class RobotCommand(
         messageChain: MessageChain
     ): Boolean {
         if (!ranges.any { it.type == msgType }) {
-            sendMessageBySituation(fromGroup, fromQQ, "很抱歉，该指令不能在当前聊天类型中使用。");
+            sendMessageBySituation(fromGroup, fromQQ, "很抱歉，该指令不能在当前聊天类型中使用。")
             return false
         }
         val authority = RobotCommandUser.getAuthority(fromGroup, fromQQ)
@@ -37,7 +37,7 @@ abstract class RobotCommand(
         return true
     }
 
-    abstract fun runCommand(msgType: Int, time: Int, fromGroup: Group?, fromQQ: User, messageChain: MessageChain)
+    abstract suspend fun runCommand(msgType: Int, time: Int, fromGroup: Group?, fromQQ: User, messageChain: MessageChain)
 }
 
 
@@ -63,7 +63,6 @@ enum class RobotCommandChatType(var type: Int) {
             is StrangerMessageEvent -> STRANGER_CHAT
             else -> null
         }
-
     }
 }
 

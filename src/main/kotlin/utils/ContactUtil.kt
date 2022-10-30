@@ -1,7 +1,6 @@
 package com.sakurawald.plum.reloaded.utils
 
 import com.sakurawald.plum.reloaded.Plum
-import com.sakurawald.plum.reloaded.api.AbstractApiMusicPlat
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import kotlinx.coroutines.delay
 import net.mamoe.mirai.Bot
@@ -17,7 +16,7 @@ fun checkLengthAndModifySendMsg(
     }
 ): String {
     Plum.logger.debug("SendSystem >> checkSendMsgLength() -> length = ${sendMsg.length}")
-    return if (sendMsg.length >= PlumConfig.system.SendSystem.sendMsgMaxLength) defaultValue(sendMsg) else sendMsg
+    return if (sendMsg.length >= PlumConfig.system.sendSystem.sendMsgMaxLength) defaultValue(sendMsg) else sendMsg
 }
 
 fun transSendMsgSpecialCode(message: String): String = message
@@ -43,18 +42,19 @@ suspend fun sendMessageBySituation(fromGroup: Group?, fromQQ: User?, msg: Messag
 }
 
 suspend fun sendDelay(isSendToGroup: Boolean) {
-    val delayTimeMS = if (isSendToGroup && PlumConfig.system.SendSystem.SendDelay.SendToGroup.enable)
-        PlumConfig.system.SendSystem.SendDelay.SendToGroup.delayTimeMS
-    else if (!isSendToGroup && PlumConfig.system.SendSystem.SendDelay.SendToFriend.enable)
-        PlumConfig.system.SendSystem.SendDelay.SendToFriend.delayTimeMS
+    val delayTimeMS: Long = if (isSendToGroup && PlumConfig.system.sendSystem.sendDelay.sendToGroup.enable)
+        PlumConfig.system.sendSystem.sendDelay.sendToGroup.delayTimeMS
+    else if (!isSendToGroup && PlumConfig.system.sendSystem.sendDelay.sendToFriend.enable)
+        PlumConfig.system.sendSystem.sendDelay.sendToFriend.delayTimeMS
     else return
     Plum.logger.debug("GuardSystem >> Send Delay ${delayTimeMS}MS~")
     delay(delayTimeMS)
 }
 
-suspend fun Bot.sendToAllFriends(msg: MessageChain) {
+suspend fun Bot.sendToAllFriends(msg: MessageChain?) {
+    if (msg == null) return
     Plum.logger.debug("SendSystem >> sendToAllQQFriends: totally ${friends.size} friends.")
-    if (PlumConfig.admin.RobotControl.forceCancel_FriendMessage) {
+    if (PlumConfig.admin.robotControl.forceCancelFriendMessage) {
         Plum.logger.debug("SendSystem >> Force Cancel Send!")
         return
     }
@@ -65,9 +65,10 @@ suspend fun Bot.sendToAllFriends(msg: MessageChain) {
     }
 }
 
-suspend fun Bot.sendToAllStrangers(msg: MessageChain) {
+suspend fun Bot.sendToAllStrangers(msg: MessageChain?) {
+    if (msg == null) return
     Plum.logger.debug("SendSystem >> sendToAllStrangers: totally ${strangers.size} strangers.")
-    if (PlumConfig.admin.RobotControl.forceCancel_FriendMessage) {
+    if (PlumConfig.admin.robotControl.forceCancelFriendMessage) {
         Plum.logger.debug("SendSystem >> Force Cancel Send!")
         return
     }
@@ -78,9 +79,10 @@ suspend fun Bot.sendToAllStrangers(msg: MessageChain) {
     }
 }
 
-suspend fun Bot.sendToAllGroups(msg: MessageChain) {
+suspend fun Bot.sendToAllGroups(msg: MessageChain?) {
+    if (msg == null) return
     Plum.logger.debug("SendSystem >> sendToAllGroups: totally ${groups.size} groups.")
-    if (PlumConfig.admin.RobotControl.forceCancel_GroupMessage) {
+    if (PlumConfig.admin.robotControl.forceCancelGroupMessage) {
         Plum.logger.debug("SendSystem >> Force Cancel Send!")
         return
     }
@@ -93,7 +95,7 @@ suspend fun Bot.sendToAllGroups(msg: MessageChain) {
 
 suspend fun Group.uploadMusic(fileName: String): SingleMessage {
     Plum.logger.debug("SendSystem >> uploadMusic() -> voice_file_name = $fileName")
-    val uploadVoiceFile = File(AbstractApiMusicPlat.voicesPath + fileName)
+    val uploadVoiceFile = File(Plum.dataFolder, "music" + File.pathSeparator + fileName)
     return uploadAudio(uploadVoiceFile.toExternalResource())
     // 过时类型 Voice 在新版本已被隐藏，无需处理
 }

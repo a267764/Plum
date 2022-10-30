@@ -5,16 +5,16 @@ import com.sakurawald.plum.reloaded.config.PlumConfig
 
 object SingManager : FunctionManager() {
 
-    override fun canUse(QQGroup: Long): Boolean {
+    override fun canUse(group: Long): Boolean {
         val interval: Int =
-            PlumConfig.functions.SingSongFunction.perUseIntervalSecond
+            PlumConfig.functions.singSongFunction.perUseIntervalSecond
         return functionUseHistoryManager.isCallSuccessIntervalLegal(
-            QQGroup, interval
+            group, interval
         )
     }
 
     /** 清理掉所有的与"唱歌功能"有关的附加参数  */
-    fun deleteParams(music_name_text: String): String? {
+    fun deleteParams(music_name_text: String): String {
         return music_name_text.lowercase().replace(SingSongCommand.RANDOM_SING_FLAG, "")
     }
 
@@ -22,5 +22,4 @@ object SingManager : FunctionManager() {
     fun isRandomSing(music_name_text: String): Boolean {
         return music_name_text.lowercase().contains(SingSongCommand.RANDOM_SING_FLAG)
     }
-
 }

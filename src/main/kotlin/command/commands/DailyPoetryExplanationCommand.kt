@@ -1,11 +1,14 @@
 package com.sakurawald.plum.reloaded.command.commands
 
-import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.command.RobotCommand
 import com.sakurawald.plum.reloaded.command.RobotCommandChatType
 import com.sakurawald.plum.reloaded.command.RobotCommandUser
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.timer.timers.DailyPoetry_Timer
+import com.sakurawald.plum.reloaded.utils.checkLengthAndModifySendMsg
+import com.sakurawald.plum.reloaded.utils.sendMessageBySituation
+import net.mamoe.mirai.contact.Group
+import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.MessageChain
 import utils.DateUtil
 
@@ -24,19 +27,25 @@ object DailyPoetryExplanationCommand : RobotCommand(
         RobotCommandUser.BOT_ADMINISTRATOR
     )
 ) {
-    override fun runCommand(msgType: Int, time: Int, fromGroup: Long, fromQQ: Long, messageChain: MessageChain) {
-        if (!PlumConfig.functions.DailyPoetry.explanation_Enable) {
-            MessageManager.sendMessageBySituation(
+    override suspend fun runCommand(
+        msgType: Int,
+        time: Int,
+        fromGroup: Group?,
+        fromQQ: User,
+        messageChain: MessageChain
+    ) {
+        if (!PlumConfig.functions.dailyPoetry.explanationEnable) {
+            sendMessageBySituation(
                 fromGroup,
                 fromQQ,
-                PlumConfig.functions.FunctionManager.functionDisableMsg
+                PlumConfig.functions.functionManager.functionDisableMsg
             )
             return
         }
 
         val targetPoetry = DailyPoetry_Timer.todayPoetry
         if (targetPoetry == null) {
-            MessageManager.sendMessageBySituation(
+            sendMessageBySituation(
                 fromGroup, fromQQ,
                 "很抱歉，目前暂时没有任何诗词可以解读，请稍后再试吧."
             )
@@ -67,9 +76,9 @@ object DailyPoetryExplanationCommand : RobotCommand(
             https://hanyu.baidu.com/
             """.trimIndent()
 
-        sendMsg = MessageManager.checkLengthAndModifySendMsg(sendMsg, defaultMsg)
+        sendMsg = checkLengthAndModifySendMsg(sendMsg) { defaultMsg }
 
         /** 发送sendMsg **/
-        MessageManager.sendMessageBySituation(fromGroup, fromQQ, sendMsg)
+        sendMessageBySituation(fromGroup, fromQQ, sendMsg)
     }
 }

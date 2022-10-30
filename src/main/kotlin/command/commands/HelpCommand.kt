@@ -1,9 +1,11 @@
 package com.sakurawald.plum.reloaded.command.commands
 
-import com.sakurawald.framework.MessageManager
 import com.sakurawald.plum.reloaded.command.RobotCommand
 import com.sakurawald.plum.reloaded.command.RobotCommandChatType
 import com.sakurawald.plum.reloaded.command.RobotCommandUser
+import com.sakurawald.plum.reloaded.utils.sendMessageBySituation
+import net.mamoe.mirai.contact.Group
+import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.MessageChain
 
 object HelpCommand : RobotCommand(
@@ -28,7 +30,13 @@ object HelpCommand : RobotCommand(
              """.trimIndent()
     }
 
-    override fun runCommand(msgType: Int, time: Int, fromGroup: Long, fromQQ: Long, messageChain: MessageChain) {
+    override suspend fun runCommand(
+        msgType: Int,
+        time: Int,
+        fromGroup: Group?,
+        fromQQ: User,
+        messageChain: MessageChain
+    ) {
         var result = """
             --> Help
             #解读      查看今天的每日诗词的解读
@@ -40,6 +48,6 @@ object HelpCommand : RobotCommand(
         }
 
         // 处理完文本后，最后发送文本
-        MessageManager.sendMessageBySituation(fromGroup, fromQQ, result)
+        sendMessageBySituation(fromGroup, fromQQ, result)
     }
 }

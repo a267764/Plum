@@ -36,7 +36,7 @@ object ApiThirdPartyRandomImage : AbstractApiRandomImage() {
         }
 
     private val random_Image_Website_URLs
-        get() = PlumConfig.functions.AtFunction.RandomImage.Random_Image_URLs
+        get() = PlumConfig.functions.atFunction.randomImage.randomImageURLs
 
     private val randomImageWebsiteURL: String
         get() {

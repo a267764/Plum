@@ -4,7 +4,8 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.SongInformation
-import com.sakurawald.utils.MD5Util
+import com.sakurawald.plum.reloaded.utils.getMD5
+import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.MusicKind
 import net.mamoe.mirai.message.data.MusicShare
 import net.mamoe.mirai.message.data.toMessageChain
@@ -21,13 +22,13 @@ object ApiKugouMusic : AbstractApiMusicPlat(
 ) {
     override val selectCodes: ArrayList<String> = arrayListOf("酷狗音乐", "酷狗")
 
-    override fun getCardCode(si: SongInformation): String {
+    override fun getCardCode(si: SongInformation): MessageChain {
         return MusicShare(
-            MusicKind.MiguMusic, si.music_Name,
-            si.summary, si.music_Page_URL, si.img_URL,
-            si.music_File_URL,
-            "[点歌] " + si.music_Name
-        ).toMessageChain().serializeToMiraiCode()
+            MusicKind.MiguMusic, si.name,
+            si.summary, si.pageUrl, si.imageUrl,
+            si.fileUrl,
+            "[点歌] " + si.name
+        ).toMessageChain()
     }
 
     private fun canAccess(keyContent: String): Boolean {
@@ -37,125 +38,100 @@ object ApiKugouMusic : AbstractApiMusicPlat(
     /**
      * 传入Si来获取音乐下载地址
      */
-    private fun getDownloadMusicURL(si: SongInformation): SongInformation? {
+    private fun getDownloadMusicURL(info: SongInformation): SongInformation? {
         /** 获取JSON  */
-        val JSON = getDownloadMusicURL_JSON(si.hash)
+        val json = getDownloadUrlJson(info.hash)
 
         /** 解析JSON  */
-        val jo = JsonParser.parseString(JSON) as JsonObject
+        val jo = JsonParser.parseString(json) as JsonObject
         val status = jo["status"].asInt
         // [!] 只有成功获取到音乐下载地址, 才会返回1
-        if (status != 1) {
-            return null
-        }
+        if (status != 1) return null
 
         // 固定的歌曲图片
-        val img_URL = "https://www.kugou.com/yy/static/images/play/logo.png"
+        val imageUrl = "https://www.kugou.com/yy/static/images/play/logo.png"
         // 取一下歌曲下载地址
-        val music_URL: String = jo.getAsJsonArray("url").firstOrNull()?.asString ?: ""
-        val music_length = jo["timeLength"].asInt
+        val musicUrl: String = jo.getAsJsonArray("url").firstOrNull()?.asString ?: ""
+        val musicLength = jo["timeLength"].asInt
 
 
         /** 完善SongInformation  */
-        si.img_URL = img_URL
-        si.music_File_URL = music_URL
-        si.music_Length = music_length
-        return si
+        info.imageUrl = imageUrl
+        info.fileUrl = musicUrl
+        info.length = musicLength
+        return info
     }
 
     /**
      * 解析音乐的下载地址
      */
-    fun getDownloadMusicURL_JSON(hash: String): String? {
+    fun getDownloadUrlJson(hash: String): String? {
         Plum.logger.debug("$logTypeName >> 解析音乐下载地址 - 请求: hash = $hash")
-        var result: String? = null
+        var json: String? = null
         val builder = OkHttpClient.Builder()
         val client: OkHttpClient = builder.build()
         // 计算出key
-        val key = MD5Util.getMD5((hash + "kgcloudv2").lowercase(Locale.getDefault()))
+        val key = getMD5((hash + "kgcloudv2").lowercase(Locale.getDefault()))
         val request = Request.Builder()
-            .url(
-                "http://trackercdn.kugou.com/i/v2/?cmd=25&key=" + key
-                        + "&hash=" + hash + "&pid=1&behavior=download"
-            )
+            .url("http://trackercdn.kugou.com/i/v2/?cmd=25&key=$key&hash=$hash&pid=1&behavior=download")
             .get()
             .addHeader("Upgrade-Insecure-Requests", "1")
-            .addHeader(
-                "User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36"
-            )
+            .addHeader("User-Agent", NetworkUtil.userAgent)
             .addHeader("Cookie", "kg_mid=justtrustme").build()
         var response: Response? = null
-        var JSON: String? = null
         try {
             response = client.newCall(request).execute()
-            JSON = response.body!!.string()
-            result = JSON
+            json = response.body!!.string()
         } catch (e: IOException) {
             Plum.logger.error(e)
         } finally {
-            Plum.logger.debug(
-                "$logTypeName >> 解析音乐下载地址 - 结果: Code = "
-                        + response!!.message + ", Response = " + JSON
-            )
+            Plum.logger.debug("$logTypeName >> 解析音乐下载地址 - 结果: Code = ${response?.message}, Response = $json")
         }
         /** 关闭Response的body  */
-        response.body!!.close()
-        return result
+        response?.body?.close()
+        return json
     }
 
     /**
      * 通过音乐名称，获取酷狗音乐的音乐列表JSON
      */
-    override fun getMusicListByMusicName_JSON(music_name: String): String? {
+    override fun getMusicListJson(name: String): String? {
         Plum.logger.debug(
-            "$logTypeName >> 搜索音乐列表 - 请求: music_name = "
-                    + music_name
+            "$logTypeName >> 搜索音乐列表 - 请求: music_name = $name"
         )
-        var result: String? = null
+        var json: String? = null
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url(
-                "http://msearchcdn.kugou.com/api/v3/search/song?&pagesize=20&keyword=${NetworkUtil.encodeURL(music_name)}&page=1"
-            )
+            .url("http://msearchcdn.kugou.com/api/v3/search/song?&pagesize=20&keyword=${NetworkUtil.encodeURL(name)}&page=1")
             .get()
-            .addHeader(
-                "User-Agent",
-                "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36"
-            )
+            .addHeader("User-Agent", NetworkUtil.userAgent)
             .build()
         var response: Response? = null
-        var JSON: String? = null
         try {
             response = client.newCall(request).execute()
-            JSON = response.body!!.string()
-            result = JSON
+            json = response.body?.string()
         } catch (e: IOException) {
             Plum.logger.error(e)
         } finally {
-            Plum.logger.debug(
-                "$logTypeName >> 搜索音乐列表 - 结果: Code = "
-                        + response!!.message + ", Response = " + JSON
-            )
+            Plum.logger.debug("$logTypeName >> 搜索音乐列表 - 结果: Code = ${response?.message}, Response = $json")
         }
         /** 关闭Response的body  */
-        response.body!!.close()
-        return result
+        response?.body?.close()
+        return json
     }
 
     /**
      * 1. 若搜索不到音乐, 则返回null 2. 若搜索到的是付费音乐, 则自动选择下一首 3. 若所有结果都不匹配, 则返回最后一次满足匹配的结果
      */
-    override fun getSongInformationByJSON(
-        getMusicListByMusicName_JSON: String?, index: Int
+    override fun getSongInfoByJson(
+        jsonText: String?, targetIndex: Int
     ): SongInformation? {
         // 若未找到结果，则返回0
-        var index = index
-        if (getMusicListByMusicName_JSON == null) return null
+        var index = targetIndex
+        if (jsonText == null) return null
 
-        val jParser = JsonParser()
-        val jo = jParser.parse(getMusicListByMusicName_JSON).asJsonObject // 构造JsonObject对象
-        if (!validSongList(jo)) return null
+        val jo = JsonParser.parseString(jsonText).asJsonObject // 构造JsonObject对象
+        if (!isValidSongList(jo)) return null
 
         val data = jo.getAsJsonObject("data")
 
@@ -169,7 +145,7 @@ object ApiKugouMusic : AbstractApiMusicPlat(
             val id = je.asJsonObject["album_audio_id"].asInt
             val hash = je.asJsonObject["hash"].asString
             val author = je.asJsonObject["singername"].asString
-            val music_page_URL = ("https://www.kugou.com/song/#hash=$hash&album_id=$id")
+            val pageUrl = ("https://www.kugou.com/song/#hash=$hash&album_id=$id")
 
             // 新建Si对象
             result = SongInformation(
@@ -178,7 +154,7 @@ object ApiKugouMusic : AbstractApiMusicPlat(
                 hash = hash
             ).also {
                 it.sourceType = "酷狗音乐"
-                it.music_Page_URL = music_page_URL
+                it.pageUrl = pageUrl
             }
 
             // [!] 调用方法, 利用hash和id解析出URL
@@ -191,7 +167,7 @@ object ApiKugouMusic : AbstractApiMusicPlat(
                 Plum.logger.debug("$logTypeName >> 获取的音乐信息(指定首) - 成功获取到指定首(第${index}首)的音乐的信息: $result")
 
                 // [!] 判断获取到的歌曲能不能下载, 若该首音乐不能下载, 则向下选择下一首
-                if (!canAccess(result.music_File_URL)) {
+                if (!canAccess(result.fileUrl)) {
                     Plum.logger.debug("$logTypeName >> 获取的音乐信息(指定首) - 检测到指定首(第${index}首)的音乐无法下载, 即将自动匹配下一首")
                     index++
                     i++
@@ -203,25 +179,23 @@ object ApiKugouMusic : AbstractApiMusicPlat(
             i++
         }
         /** 若输入的index超出音乐列表，则返回最后一次成功匹配到的音乐ID  */
-        return if (result == null) {
-            null
-        } else {
+        if (result != null) {
             Plum.logger.debug("$logTypeName >> 获取音乐信息(指定首) - 未获取到指定首(第${index}首)的音乐，默认返回最后一次成功获取的音乐信息: $result")
-            result
         }
+        return result
     }
 
     /**
      * 用于判断音乐搜索结果中是否有符合结果的音乐
      */
-    override fun validSongList(
-        getMusicListByMusicName_JSON_OBJECT: JsonObject
+    override fun isValidSongList(
+        jsonObj: JsonObject
     ): Boolean {
         // 判断错误码
-        val errcode = getMusicListByMusicName_JSON_OBJECT["errcode"].asInt
-        if (errcode != 0) return false
+        val code = jsonObj["errcode"].asInt
+        if (code != 0) return false
         // 判断音乐列表
-        val jo_1 = getMusicListByMusicName_JSON_OBJECT.getAsJsonObject("data")
-        return jo_1 != null && jo_1["info"].asJsonArray.size() != 0
+        val jo1 = jsonObj.getAsJsonObject("data")
+        return jo1 != null && jo1["info"].asJsonArray.size() != 0
     }
 }

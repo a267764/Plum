@@ -48,12 +48,12 @@ object ApiBaiDuHanYu {
             .replace("㈦", "(7)").replace("㈧", "(8)").replace("㈨", "(9)")
             .replace("㈩", "(10)")
 
-        /** Generate FormatedNote.  */
+        /** Generate FormattedNote.  */
         var index = 1
         val ns = ArrayList(
             listOf(
                 *notes
-                    .split("\\(\\d{1,3}\\)|\\[\\d{1,3}\\]|〔\\d{1,3}〕|\\d{1,3}\\.|\\d{1,3}、".toRegex())
+                    .split("\\(\\d{1,3}\\)|\\[\\d{1,3}]|〔\\d{1,3}〕|\\d{1,3}\\.|\\d{1,3}、".toRegex())
                     .dropLastWhile { it.isEmpty() }.toTypedArray()
             )
         )
@@ -61,7 +61,7 @@ object ApiBaiDuHanYu {
         if (ns.size == 1) return ns[0]
 
         val result = StringBuilder()
-        for (s in ns.map { it.trim { it <= ' ' } }) {
+        for (s in ns.map { it.trim { it1 -> it1 <= ' ' } }) {
             // [!] 此处对单条注释进行trim，防止本来百度文库的每条注释，结尾都有换行符，
             // 最终导致换行符过多，格式难看！
             // s = s.trim { it <= ' ' }
@@ -169,16 +169,13 @@ object ApiBaiDuHanYu {
             "<b>[\\s\\S]*?注释[\\s\\S]*?</b>[\\s\\S]*?</a>[\\s\\S]*?</div>[\\s\\S]*?<div class=\"poem-detail-separator\">[\\s\\S]*?</div>[\\s\\S]*?<div class=\"poem-detail-item-content\">([\\s\\S]*?)</div>"
         val p = Pattern.compile(rule, Pattern.DOTALL)
         val m = p.matcher(HTML)
-        var notes: String? = null
         return if (m.find()) {
             formatNotes(
                 NetworkUtil.deleteHTMLTags(
                     NetworkUtil.decodeHTML(m.group(1))
                 ).replace("来源：古诗文网", "")
             ).trim { it <= ' ' }
-        } else {
-            "无"
-        }
+        } else { "无" }
     }
 
     private fun getTitle(HTML: String): String {
@@ -210,13 +207,13 @@ object ApiBaiDuHanYu {
 
     /** 若获取到的是无效的URL网页，则重新获取  */
     @JvmStatic
-    fun getRandomPoetry(): ApiJinRiShiCi.Poetry {
-        val baiduHanYuPoetryHTML = NetworkUtil.getDynamicHTML(baiduHanYuRandomURL)
+    fun getRandomPoetry(): ApiJinRiShiCi.Poetry? {
+        val baiduHanYuPoetryHTML = NetworkUtil.getDynamicHTML(baiduHanYuRandomURL) ?: return null
         /** 若获取到的是无效的URL网页，则重新获取  */
         if (!isValidHTTP(baiduHanYuPoetryHTML)) {
 
             // 若几次重试后，还是失败，则将retryCount设为0，然后放弃重试，终止递归
-            if (retryCount >= PlumConfig.functions.DailyPoetry.maxRetryLimit) {
+            if (retryCount >= PlumConfig.functions.dailyPoetry.maxRetryLimit) {
                 retryCount = 0
                 Plum.logger.debug("BaiDuHanYu >> RetryCount has run out -> Abandon!")
                 return ApiJinRiShiCi.Poetry.defaultPoetry
