@@ -2,9 +2,11 @@ package com.sakurawald.plum.reloaded
 
 import com.sakurawald.plum.reloaded.command.RobotCommandManager
 import com.sakurawald.plum.reloaded.config.PlumConfig
+import com.sakurawald.plum.reloaded.console.commands.PlumCommand
 import com.sakurawald.plum.reloaded.function.NudgeFunction
 import com.sakurawald.plum.reloaded.timer.RobotTimerManager
 import net.mamoe.mirai.Bot
+import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.event.events.BotInvitedJoinGroupRequestEvent
@@ -40,6 +42,7 @@ object Plum : KotlinPlugin(
         logger.debug("CommandSystem >> Init CommandSystem.")
         /** 接收群/好友/陌生人/群临时消息事件 **/
         RobotCommandManager.initialize(channel)
+        PlumCommand.register()
 
         channel.subscribeAlways<BotOnlineEvent> {
             if (bot_ == null) bot_ = it.bot

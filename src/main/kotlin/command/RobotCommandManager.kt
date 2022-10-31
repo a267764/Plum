@@ -4,7 +4,6 @@ import com.sakurawald.plum.reloaded.Plum
 import com.sakurawald.plum.reloaded.command.RobotCommandChatType.Companion.toMessageType
 import com.sakurawald.plum.reloaded.command.commands.DailyPoetryExplanationCommand
 import com.sakurawald.plum.reloaded.command.commands.HelpCommand
-import com.sakurawald.plum.reloaded.command.commands.ReloadCommand
 import com.sakurawald.plum.reloaded.command.commands.SingSongCommand
 import com.sakurawald.plum.reloaded.config.PlumConfig
 import com.sakurawald.plum.reloaded.function.AtFunction
@@ -20,7 +19,6 @@ import net.mamoe.mirai.message.data.MessageChain
 object RobotCommandManager {
     val commands = mutableListOf(
         HelpCommand,
-        ReloadCommand,
         SingSongCommand,
         DailyPoetryExplanationCommand
     )

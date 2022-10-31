@@ -23,13 +23,6 @@ object HelpCommand : RobotCommand(
         RobotCommandUser.BOT_ADMINISTRATOR
     )
 ) {
-    fun addSuperAdministratorHelp(result: String): String {
-        return """$result
-             --> Bot Administrator
-             #重载配置      重新加载配置文件
-             """.trimIndent()
-    }
-
     override suspend fun runCommand(
         msgType: Int,
         time: Int,
@@ -37,16 +30,10 @@ object HelpCommand : RobotCommand(
         fromQQ: User,
         messageChain: MessageChain
     ) {
-        var result = """
+        val result = """
             --> Help
             #解读      查看今天的每日诗词的解读
             """.trimIndent()
-        val authority = RobotCommandUser.getAuthority(fromGroup, fromQQ)
-
-        if (authority == RobotCommandUser.BOT_ADMINISTRATOR.userPermission) {
-            result = addSuperAdministratorHelp(result)
-        }
-
         // 处理完文本后，最后发送文本
         sendMessageBySituation(fromGroup, fromQQ, result)
     }
