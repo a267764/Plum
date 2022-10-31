@@ -1,1 +1,1 @@
-rootProject.name = "Plum"
+rootProject.name = "PlumReloaded"
