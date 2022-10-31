@@ -77,6 +77,13 @@ object DateUtil {
         it.time = this
     }
 
+    /**
+     * 将时间戳(秒)转换为 Calendar 对象
+     */
     fun Long.toCalendar(): Calendar = toDate().toCalendar()
-    fun Long.toDate(): Date = Date(this)
+
+    /**
+     * 将时间戳(秒)转换为 Date 对象
+     */
+    fun Long.toDate(): Date = Date(this * 1000)
 }

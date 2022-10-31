@@ -42,9 +42,9 @@ object PlumConfig : ReadOnlyPluginConfig("config") {
             dailyCountdown = FunctionsDailyCountdown(
                 enable = true,
                 countdownCommands = listOf(
-                    "◆距离2021年高考还有\$diff_days天！|1623027804000|高考加油！&高考加油！&2021年高考已结束~",
-                    "◆距离2020年考研还有\$diff_days天！|1608512604000|考研加油&考研加油&考研加油&2020年考研已结束~",
-                    "◆距离2020年四六级考试还有\$diff_days天！|1600477404000|四六级考试加油！&四六级考试已结束~"
+                    "◆距离2023年高考还有\$diff_days天！|1686067200|高考加油！&高考加油！&2023年高考已结束~",
+                    "◆距离2023年考研还有\$diff_days天！|1671811200|考研加油&考研加油&考研加油&2023年考研已结束~",
+                    "◆距离2023年四六级考试还有\$diff_days天！|1686758400|四六级考试加油！&四六级考试已结束~"
                 )
             ),
             dailyPoetry = FunctionsDailyPoetry(
